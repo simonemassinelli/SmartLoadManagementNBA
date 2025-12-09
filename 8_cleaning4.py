@@ -94,4 +94,5 @@ def fill_missing_seasons(df):
     else:
         return df
 
-final_df_filled = fill_missing_seasons(final_df)
+final_df = fill_missing_seasons(final_df)
+final_df = final_df.to_csv('cleaning4.csv', index=False)
