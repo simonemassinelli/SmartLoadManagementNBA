@@ -14,85 +14,119 @@ final_df = final_df[final_df['MIN_INT'] < 70]
 final_df = final_df[final_df['PTS_home'] > 50]
 
 RATING_THRESHOLD = 75
-MAX_GAP_YEARS = 2
 
-def fill_missing_seasons(df):
 
+def create_dnp_row(game, player_name, team_code, ref_data, season, mode):
+    age_offset = 1 if mode == "Season" else 0
+
+    return {
+        'GAME_DATE_EST': game['GAME_DATE_EST'],
+        'PTS_home': game['PTS_home'],
+        'PTS_away': game['PTS_away'],
+        'PLAYER_NAME': player_name,
+        'COMMENT': "DNP - Injury/Illness (Simulated)",
+        'HOME_TEAM': game['HOME_TEAM'],
+        'AWAY_TEAM': game['AWAY_TEAM'],
+        'PLAYER_TEAM': team_code,
+        'POINTS_DIFF': abs(game['PTS_home'] - game['PTS_away']),
+        'MIN_INT': 0,
+        'SEASON': season,
+        'RATING': ref_data['RATING'],
+        'AGE': ref_data['AGE'] + age_offset,
+        'PLAYER_HEIGHT': ref_data['PLAYER_HEIGHT'],
+        'PLAYER_WEIGHT': ref_data['PLAYER_WEIGHT'],
+        'DRAFT_YEAR': ref_data['DRAFT_YEAR'],
+        'GP': 0,
+        'PLUS_MINUS': 0,
+        'OREB_PCT': 0.0,
+        'DREB_PCT': 0.0,
+        'USG_PCT': 0.0,
+        'POS': ref_data['POS']
+    }
+
+
+def fill_missing_games_and_seasons(df):
     game_cols = ['GAME_DATE_EST', 'HOME_TEAM', 'AWAY_TEAM', 'PTS_home', 'PTS_away', 'SEASON']
     schedule_df = df[game_cols].drop_duplicates(subset=['GAME_DATE_EST', 'HOME_TEAM', 'AWAY_TEAM'])
 
     team_schedules = defaultdict(list)
-
     for _, row in schedule_df.iterrows():
         season = row['SEASON']
-        home = row['HOME_TEAM']
-        away = row['AWAY_TEAM']
+        team_schedules[(season, row['HOME_TEAM'])].append(row)
+        team_schedules[(season, row['AWAY_TEAM'])].append(row)
 
-        team_schedules[(season, home)].append(row)
-        team_schedules[(season, away)].append(row)
-
-    df = df.sort_values(by=['PLAYER_NAME', 'SEASON'])
-    player_groups = df.groupby('PLAYER_NAME')['SEASON'].agg(['min', 'max', 'unique'])
-
+    df = df.sort_values(by=['PLAYER_NAME', 'GAME_DATE_EST'])
+    unique_players = df['PLAYER_NAME'].unique()
     new_rows_buffer = []
 
-    for player_name, stats in tqdm(player_groups.iterrows(), total=len(player_groups), desc="Processing Players"):
-        min_seas = stats['min']
-        max_seas = stats['max']
-        actual_seasons = set(stats['unique'])
-        expected_seasons = set(range(min_seas, max_seas + 1))
-        missing_seasons = sorted(list(expected_seasons - actual_seasons))
+    for player_name in tqdm(unique_players, desc="Processing"):
+        player_df = df[df['PLAYER_NAME'] == player_name]
 
-        if not missing_seasons:
-            continue
+        actual_seasons = set(player_df['SEASON'].unique())
+        min_seas = player_df['SEASON'].min()
+        max_seas = player_df['SEASON'].max()
 
-        for missed_year in missing_seasons:
-            prev_year = missed_year - 1
+        expected_seasons_range = set(range(min_seas, max_seas + 1))
+        missing_seasons = sorted(list(expected_seasons_range - actual_seasons))
 
-            if prev_year not in actual_seasons:
-                continue
+        if missing_seasons:
+            for missed_year in missing_seasons:
+                prev_year = missed_year - 1
+                while prev_year >= min_seas and prev_year not in actual_seasons:
+                    prev_year -= 1
 
-            prev_data = df[(df['PLAYER_NAME'] == player_name) & (df['SEASON'] == prev_year)].iloc[0]
+                if prev_year < min_seas: continue
 
-            if prev_data['RATING'] < RATING_THRESHOLD:
-                continue
-            team_code = prev_data['PLAYER_TEAM']
+                prev_data = player_df[player_df['SEASON'] == prev_year].iloc[-1]
 
-            if (missed_year, team_code) in team_schedules:
-                games_to_inject = team_schedules[(missed_year, team_code)]
+                if prev_data['RATING'] < RATING_THRESHOLD:
+                    continue
 
-                for game in games_to_inject:
-                    new_row = {'GAME_DATE_EST': game['GAME_DATE_EST'],
-                        'PTS_home': game['PTS_home'],
-                        'PTS_away': game['PTS_away'],
-                        'PLAYER_NAME': player_name,
-                        'COMMENT': "DNP - Injury/Illness",
-                        'HOME_TEAM': game['HOME_TEAM'],
-                        'AWAY_TEAM': game['AWAY_TEAM'],
-                        'PLAYER_TEAM': team_code,
-                        'POINTS_DIFF': game['PTS_home'] - game['PTS_away'],
-                        'MIN_INT': 0,
-                        'SEASON': missed_year,
-                        'RATING': prev_data['RATING'],
-                        'AGE': prev_data['AGE'] + 1,
-                        'PLAYER_HEIGHT': prev_data['PLAYER_HEIGHT'],
-                        'PLAYER_WEIGHT': prev_data['PLAYER_WEIGHT'],
-                        'DRAFT_YEAR': prev_data['DRAFT_YEAR'],
-                        'GP': 0,
-                        'PLUS_MINUS': 0,
-                        'OREB_PCT': 0.0,
-                        'DREB_PCT': 0.0,
-                        'USG_PCT': 0.0,
-                        'POS': prev_data['POS']}
-                    new_rows_buffer.append(new_row)
+                team_code = prev_data['PLAYER_TEAM']
+
+                if (missed_year, team_code) in team_schedules:
+                    games = team_schedules[(missed_year, team_code)]
+                    for game in games:
+                        new_rows_buffer.append(
+                            create_dnp_row(game, player_name, team_code, prev_data, missed_year, "Season"))
+
+        for season in actual_seasons:
+            season_data = player_df[player_df['SEASON'] == season]
+            teams_in_season = season_data['PLAYER_TEAM'].unique()
+
+            for team in teams_in_season:
+                team_player_data = season_data[season_data['PLAYER_TEAM'] == team]
+                ref_data = team_player_data.iloc[-1]
+
+                if (season, team) not in team_schedules:
+                    continue
+
+                full_team_schedule = team_schedules[(season, team)]
+                played_dates = set(team_player_data['GAME_DATE_EST'])
+
+                if len(teams_in_season) > 1:
+                    start_date = team_player_data['GAME_DATE_EST'].min()
+                    end_date = team_player_data['GAME_DATE_EST'].max()
+
+                    relevant_games = [
+                        g for g in full_team_schedule
+                        if start_date <= g['GAME_DATE_EST'] <= end_date
+                    ]
+                else:
+                    relevant_games = full_team_schedule
+
+                for game in relevant_games:
+                    if game['GAME_DATE_EST'] not in played_dates:
+                        new_rows_buffer.append(create_dnp_row(game, player_name, team, ref_data, season, "Game"))
 
     if new_rows_buffer:
         injected_df = pd.DataFrame(new_rows_buffer)
         final_complete_df = pd.concat([df, injected_df], ignore_index=True)
-
+        final_complete_df = final_complete_df.drop_duplicates(subset=['PLAYER_NAME', 'GAME_DATE_EST'], keep='first')
         return final_complete_df.sort_values(by=['GAME_DATE_EST', 'HOME_TEAM'])
     else:
         return df
 
-final_df = fill_missing_seasons(final_df)
-final_df = final_df.to_csv('cleaning4.csv', index=False)
+
+final_df = fill_missing_games_and_seasons(final_df)
+final_df.to_csv('cleaning4.csv', index=False)
