@@ -42,6 +42,7 @@ df['CONDITION'] = df['CONDITION'].round(1)
 
 df_DG = df[df['PLAYER_NAME'] == 'Danilo Gallinari']
 
+print(len(df))
 print(df_DG[['GAME_DATE_EST', 'PLAYER_NAME', 'COMMENT', 'IS_INJURED', 'CONDITION']])
 
 df.to_csv('player_condition.csv', index=False)

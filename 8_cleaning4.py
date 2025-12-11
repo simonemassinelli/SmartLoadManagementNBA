@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from tqdm import tqdm
 from collections import defaultdict
 
@@ -19,34 +20,43 @@ RATING_THRESHOLD = 75
 def create_dnp_row(game, player_name, team_code, ref_data, season, mode):
     age_offset = 1 if mode == "Season" else 0
 
+    def get_val(col, default):
+        val = ref_data.get(col, default)
+        return val if pd.notna(val) else default
+
     return {
         'GAME_DATE_EST': game['GAME_DATE_EST'],
+        'GAME_ID': game.get('GAME_ID', -1),
         'PTS_home': game['PTS_home'],
         'PTS_away': game['PTS_away'],
         'PLAYER_NAME': player_name,
         'COMMENT': "DNP - Injury/Illness (Simulated)",
+        'PLUS_MINUS': 0,
         'HOME_TEAM': game['HOME_TEAM'],
         'AWAY_TEAM': game['AWAY_TEAM'],
         'PLAYER_TEAM': team_code,
-        'POINTS_DIFF': abs(game['PTS_home'] - game['PTS_away']),
+        'POINTS_DIFF': game['PTS_home'] - game['PTS_away'],
         'MIN_INT': 0,
         'SEASON': season,
-        'RATING': ref_data['RATING'],
-        'AGE': ref_data['AGE'] + age_offset,
-        'PLAYER_HEIGHT': ref_data['PLAYER_HEIGHT'],
-        'PLAYER_WEIGHT': ref_data['PLAYER_WEIGHT'],
-        'DRAFT_YEAR': ref_data['DRAFT_YEAR'],
-        'GP': 0,
-        'PLUS_MINUS': 0,
+        'GS_real': get_val('GS_real', 0),
+        'RATING': get_val('RATING', 70),
+        'AGE': get_val('AGE', 25) + age_offset,
+        'PLAYER_HEIGHT': get_val('PLAYER_HEIGHT', np.nan),
+        'PLAYER_WEIGHT': get_val('PLAYER_WEIGHT', np.nan),
+        'DRAFT_YEAR': get_val('DRAFT_YEAR', np.nan),
+        'GP_real': get_val('GP_real', 0),
+        'NET_RATING': 0.0,
         'OREB_PCT': 0.0,
         'DREB_PCT': 0.0,
         'USG_PCT': 0.0,
-        'POS': ref_data['POS']
+        'POS': get_val('POS', np.nan),
+        'PLAYER_IMPORTANCE': get_val('PLAYER_IMPORTANCE', 0),
+        'PLAYED': 0
     }
 
 
 def fill_missing_games_and_seasons(df):
-    game_cols = ['GAME_DATE_EST', 'HOME_TEAM', 'AWAY_TEAM', 'PTS_home', 'PTS_away', 'SEASON']
+    game_cols = ['GAME_DATE_EST', 'HOME_TEAM', 'AWAY_TEAM', 'PTS_home', 'PTS_away', 'SEASON', 'GAME_ID']
     schedule_df = df[game_cols].drop_duplicates(subset=['GAME_DATE_EST', 'HOME_TEAM', 'AWAY_TEAM'])
 
     team_schedules = defaultdict(list)
@@ -129,4 +139,23 @@ def fill_missing_games_and_seasons(df):
 
 
 final_df = fill_missing_games_and_seasons(final_df)
+
+final_df = final_df.sort_values(by=['PLAYER_NAME', 'GAME_DATE_EST'])
+
+static_cols = ['PLAYER_HEIGHT', 'PLAYER_WEIGHT', 'DRAFT_YEAR', 'POS']
+final_df[static_cols] = final_df.groupby('PLAYER_NAME')[static_cols].ffill()
+final_df[static_cols] = final_df.groupby('PLAYER_NAME')[static_cols].bfill()
+
+final_df['PLAYER_HEIGHT'] = final_df['PLAYER_HEIGHT'].fillna(final_df['PLAYER_HEIGHT'].mean())
+final_df['PLAYER_WEIGHT'] = final_df['PLAYER_WEIGHT'].fillna(final_df['PLAYER_WEIGHT'].mean())
+final_df['DRAFT_YEAR'] = final_df['DRAFT_YEAR'].fillna('Undrafted')
+final_df['POS'] = final_df['POS'].fillna('SF')
+
+perf_cols = ['NET_RATING_real', 'OREB_PCT', 'DREB_PCT', 'USG_PCT', 'PLAYER_IMPORTANCE', 'GS_real']
+final_df[perf_cols] = final_df[perf_cols].fillna(0)
+
+final_df = final_df.drop('NET_RATING', axis = 1)
+
+print(final_df.info())
+
 final_df.to_csv('cleaning4.csv', index=False)
