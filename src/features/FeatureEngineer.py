@@ -255,6 +255,14 @@ class FeatureEngineer:
         )
         denom = (self.df['TEAM_TOTAL_GP'] - self.df['GP_real']).replace(0, np.nan)
 
+        self.df['TEAM_AVG_RATING'] = self.df.merge(
+            team_season_strength[['SEASON', 'TEAM_LOOKUP', 'TEAM_AVG_RATING']],
+            left_on=['SEASON', 'PLAYER_TEAM'],
+            right_on=['SEASON', 'TEAM_LOOKUP'],
+            how='left'
+        )['TEAM_AVG_RATING'].values
+
+
         self.df['TEAM_RATING_WO_PLAYER'] = (
             (self.df['TEAM_TOTAL_RATING'] - self.df['RATING']) / denom
         ).fillna(self.df['TEAM_AVG_RATING'])
