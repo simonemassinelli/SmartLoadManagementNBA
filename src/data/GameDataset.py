@@ -26,10 +26,10 @@ class GameDataset(Dataset):
         'OPPONENT_STRENGTH',
         'STRONG_OPPONENT',
         'WEAK_OPPONENT',
-        'HOME_TEAM_POSITION',
         'HOME_TEAM_W_PCT',
-        'AWAY_TEAM_POSITION',
-        'AWAY_TEAM_W_PCT'
+        'AWAY_TEAM_W_PCT',
+        'TEAM_POSITION',
+        'OPPONENT_POSITION',
     ]
 
     PLAYER_FEATURES = [
@@ -38,23 +38,25 @@ class GameDataset(Dataset):
         'PLAYER_WEIGHT',
         'BMI',
         'AGE_GROUP',
+        'HEAVY_PLAYER',
         'YEARS_IN_LEAGUE',
         'IS_ROOKIE',
         'IS_VETERAN',
-        'RATING',
+        'DRAFT_YEAR',
+        'IS_GUARD',
+        'IS_FORWARD',
+        'IS_CENTER',
+        'IS_BIG',
         'NET_RATING_real',
         'USG_PCT',
         'OREB_PCT',
         'DREB_PCT',
         'PLAYER_IMPORTANCE',
+        'GP_real',
         'START_RATIO',
         'AVAILABILITY',
         'IS_STARTER',
-        'IS_GUARD',
-        'IS_FORWARD',
-        'IS_CENTER',
-        'IS_BIG',
-        'HEAVY_PLAYER',
+        'DAYS_REST',
         'MIN_INT_LAG1',
         'PLUS_MINUS_LAG1',
         'LOW_USAGE_LAG1',
@@ -66,13 +68,14 @@ class GameDataset(Dataset):
         'MAX_MIN_5',
         'CONSISTENT_HEAVY',
         'RECENT_PERFORMANCE',
-        'DAYS_REST',
-        'DRAFT_YEAR',
-        'GP_real'
+        'RATING'
     ]
 
     WIN_FEATURES = [
         'HOME_GAME',
+        'SEASON_END_PHASE',
+        'IS_PLAYOFF',
+        'BACK_TO_BACK',
         'TEAM_WIN_RATE_10',
         'TEAM_WINNING_STREAK',
         'TEAM_LOSING_STREAK',
@@ -82,14 +85,20 @@ class GameDataset(Dataset):
         'OPPONENT_STRENGTH',
         'STRONG_OPPONENT',
         'WEAK_OPPONENT',
-        'RATING_DIFF',
-        'SEASON_END_PHASE',
-        'IS_PLAYOFF'
+        'TEAM_STRENGTH_DIFF',
+        'FAVORABLE_MATCHUP',
+        'TOUGH_MATCHUP',
+        'HOME_TEAM_W_PCT',
+        'AWAY_TEAM_W_PCT',
+        'TEAM_POSITION',
+        'OPPONENT_POSITION',
     ]
 
     INJURY_FEATURES = [
         'AGE',
         'BMI',
+        'AGE_GROUP',
+        'HEAVY_PLAYER',
         'YEARS_IN_LEAGUE',
         'DAYS_REST',
         'BACK_TO_BACK',
@@ -97,9 +106,12 @@ class GameDataset(Dataset):
         'PREV_INJURED',
         'INJURY_HISTORY_INDEX',
         'HAS_INJURY_HISTORY',
+        'INJURY_COUNT_SEASON',
+        'INJURY_NEARBY_PAST',
         'CONDITION',
         'POOR_CONDITION',
         'MIN_INT_LAG1',
+        'LOW_USAGE_LAG1',
         'RECENT_MIN_3',
         'RECENT_MIN_5',
         'RECENT_MIN_10',
@@ -111,20 +123,21 @@ class GameDataset(Dataset):
         'B2B_HEAVY_RISK_LAG1',
         'PURE_FATIGUE_RISK_LAG1',
         'ANY_FATIGUE_LAG1',
-        'AGE_GROUP',
-        'INJURY_COUNT_SEASON',
-        'IS_INJURED',
-        'LOW_USAGE_LAG1'
+        'IS_INJURED'
     ]
 
     def __init__(self, csv_path):
         self.df = pd.read_csv(csv_path)
 
+        self._verify_columns()
+
+        self.df['GAME_DATE_EST'] = pd.to_datetime(self.df['GAME_DATE_EST'], errors='coerce')
+
         players_per_game = (
-            self.df.groupby(['SEASON', 'PLAYER_TEAM', 'GAME_DATE_EST'])
+            self.df.groupby(['SEASON', 'PLAYER_TEAM', 'GAME_DATE_EST', 'GAME_ID'])
             .size()
         )
-        self.max_players = int(players_per_game.max()) + 1
+        self.max_players = int(players_per_game.max())
         print(f"Max players: {self.max_players}")
 
         self.games = self._prepare_games()
@@ -145,9 +158,9 @@ class GameDataset(Dataset):
     def _prepare_games(self):
         games = []
 
-        grouped = self.df.groupby(['SEASON', 'PLAYER_TEAM', 'GAME_DATE_EST'])
+        grouped = self.df.groupby(['SEASON', 'PLAYER_TEAM', 'GAME_DATE_EST', 'GAME_ID'])
 
-        for (season, team, date), group in grouped:
+        for (season, team, date, game_id), group in grouped:
             if len(group) == 0:
                 continue
 
@@ -187,7 +200,7 @@ class GameDataset(Dataset):
         injury_feats = np.zeros((self.max_players, len(self.INJURY_FEATURES)), dtype = np.float32)
         injury_feats[:num_players] = game_data[self.INJURY_FEATURES].values
 
-        won = game_data['TEAM_WON'].iloc[0]
+        won = float(game_data['TEAM_WON'].iloc[0])
 
         injuries = np.zeros(self.max_players, dtype = np.float32)
         if 'INJURED_NEXT_GAME' in game_data.columns:
@@ -210,4 +223,18 @@ class GameDataset(Dataset):
             'date': game['date'],
         }
 
+    def _verify_columns(self):
+        all_features = set()
+        all_features.update(self.SHARED_FEATURES)
+        all_features.update(self.PLAYER_FEATURES)
+        all_features.update(self.WIN_FEATURES)
+        all_features.update(self.INJURY_FEATURES)
+        all_features.update(['MIN_INT', 'TEAM_WON', 'SEASON', 'PLAYER_TEAM', 'GAME_DATE_EST'])
+        missing = [feature for feature in all_features if feature not in self.df.columns]
+
+        if missing:
+            print(f"Missing {len(missing)} features")
+            for col in sorted(missing):
+                print(f"{col}")
+            raise ValueError('Missing required columns')
 
