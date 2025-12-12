@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-from datetime import datetime
 
 class FeatureEngineer:
     def __init__(self, csv_path):
@@ -43,6 +42,9 @@ class FeatureEngineer:
         self.team_features()
         self.injury_features()
         self.physical_features()
+
+        self.make_pregame_safe()
+
         self.cleanup()
 
         print(f"Total features: {len(self.df.columns)}")
@@ -124,41 +126,59 @@ class FeatureEngineer:
 
     def rolling_features(self):
 
-        # How many mins a player has been playing recently (3, 5, 10) games
+        player_history = self.df.groupby('PLAYER_NAME', group_keys = False)
+        min_prev = player_history['MIN_INT'].shift(1)
+
         self.df['RECENT_MIN_3'] = (
-            self.df.groupby('PLAYER_NAME')['MIN_INT']
-            .transform(lambda x: x.rolling(3, min_periods=1).mean())
+            min_prev.groupby(self.df['PLAYER_NAME'])
+            .rolling(3, min_periods = 1)
+            .mean()
+            .reset_index(level = 0, drop = True)
+            .fillna(0)
         )
 
         self.df['RECENT_MIN_5'] = (
-            self.df.groupby('PLAYER_NAME')['MIN_INT']
-            .transform(lambda x: x.rolling(5, min_periods=1).mean())
+            min_prev.groupby(self.df['PLAYER_NAME'])
+            .rolling(5, min_periods=1)
+            .mean()
+            .reset_index(level=0, drop=True)
+            .fillna(0)
         )
 
         self.df['RECENT_MIN_10'] = (
-            self.df.groupby('PLAYER_NAME')['MIN_INT']
-            .transform(lambda x: x.rolling(10, min_periods=1).mean())
+            min_prev.groupby(self.df['PLAYER_NAME'])
+            .rolling(10, min_periods=1)
+            .mean()
+            .reset_index(level=0, drop=True)
+            .fillna(0)
         )
 
         self.df['MIN_TREND'] = self.df['RECENT_MIN_3'] - self.df['RECENT_MIN_5']
 
         # if current much higher than recent avg
         self.df['WORKLOAD_SPIKE'] = (
-            (self.df['MIN_INT'] - self.df['RECENT_MIN_5']) > 10
-        ).astype(int)
+            (min_prev - self.df['RECENT_MIN_5']) > 10).fillna(0).astype(int)
 
-        # max mins in last 5 games
         self.df['MAX_MIN_5'] = (
-            self.df.groupby('PLAYER_NAME')['MIN_INT']
-            .transform(lambda x: x.rolling(5, min_periods=1).max())
+            min_prev.groupby(self.df['PLAYER_NAME'])
+            .rolling(5, min_periods = 1)
+            .max()
+            .reset_index(level = 0, drop = True)
+            .fillna(0)
         )
 
         # consistent heavy workload
         self.df['CONSISTENT_HEAVY'] = (self.df['RECENT_MIN_5'] > 35).astype(int)
 
-        self.df['RECENT_PERFORMANCE'] = (
-            self.df.groupby('PLAYER_NAME')['PLUS_MINUS']
-            .transform(lambda x: x.rolling(5, min_periods=1).mean())
+        # Recent performance should be based on previous games only
+        performance_prev = self.df.groupby('PLAYER_NAME')['PLUS_MINUS'].shift(1)
+
+        self.df['RECENT_PERFORMANCE'] =  (
+            performance_prev.groupby(self.df['PLAYER_NAME'])
+            .rolling(5, min_periods = 1)
+            .mean()
+            .reset_index(level = 0, drop = True)
+            .fillna(0)
         )
 
         team_results = (
@@ -172,6 +192,11 @@ class FeatureEngineer:
             team_results
             .groupby(['SEASON', 'PLAYER_TEAM'])['TEAM_WON']
             .transform(lambda x: x.rolling(10, min_periods=1).mean())
+        )
+        team_results['TEAM_WIN_RATE_10'] = (
+            team_results.groupby(['SEASON', 'PLAYER_TEAM'])['TEAM_WIN_RATE_10']
+            .shift(1)
+            .fillna(0)
         )
 
         self.df = self.df.merge(
@@ -344,3 +369,27 @@ class FeatureEngineer:
         self.df[numeric_cols] = self.df[numeric_cols].fillna(0)
         self.df = self.df.replace([np.inf, -np.inf], 0)
         self.df = self.df.dropna(subset = ['PLAYER_NAME', 'GAME_DATE_EST'])
+
+    def make_pregame_safe(self):
+        # We need to make pregame safe features when predicting next game, so the idea is to use information available only before the game starts. So any feature thet depends on the current game must be computed from PAST games only. Do to this I shifted player stats by 1 game (lag = 1) within each player
+
+        self.df = self.df.sort_values(['PLAYER_NAME', 'GAME_DATE_EST']).copy()
+
+        lag_base_cols = [
+            'MIN_INT',
+            'PLUS_MINUS',
+            'FATIGUE_RISK',
+            'B2B_HEAVY_RISK',
+            'PURE_FATIGUE_RISK',
+            'ANY_FATIGUE',
+            'LOW_USAGE',
+        ]
+
+        lag_base_cols = [col for col in lag_base_cols if col in self.df.columns]
+
+        for col in lag_base_cols:
+            self.df[f'{col}_LAG1'] = (
+                self.df.groupby('PLAYER_NAME')[col]
+                .shift(1)
+                .fillna(0)
+            )

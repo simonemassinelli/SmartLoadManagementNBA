@@ -4,6 +4,8 @@ import numpy as np
 import torch
 
 class GameDataset(Dataset):
+
+
     SHARED_FEATURES = [
         'HOME_GAME', 'BACK_TO_BACK', 'OPPONENT_STRENGTH',
         'GAMES_REMAINING', 'SEASON_END_PHASE', 'SEASON_PROGRESS',
@@ -51,6 +53,10 @@ class GameDataset(Dataset):
         print(f"Total games: {len(self.games):,}")
 
 
+    def count_features(self):
+        return len(self.PLAYER_FEATURES) + len(self.INJURY_FEATURES) + len(self.SHARED_FEATURES) + len(self.WIN_FEATURES)
+
+
     def _prepare_games(self):
         games = []
 
@@ -89,7 +95,7 @@ class GameDataset(Dataset):
         player_mask = np.zeros(self.max_players, dtype = np.float32)
         player_mask[:num_players] = 1
 
-        win_feats = game_data[self.WIN_FEATURES].iloc[0].value.astype(np.float32)
+        win_feats = game_data[self.WIN_FEATURES].iloc[0].values.astype(np.float32)
 
         injury_feats = np.zeros((self.max_players, len(self.INJURY_FEATURES)), dtype = np.float32)
         injury_feats[:num_players] = game_data[self.INJURY_FEATURES].values
