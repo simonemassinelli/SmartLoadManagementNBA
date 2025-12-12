@@ -2,129 +2,15 @@ from torch.utils.data import Dataset
 import pandas as pd
 import numpy as np
 import torch
+from src.data.features import SHARED_FEATURES, PLAYER_FEATURES, WIN_FEATURES, INJURY_FEATURES
+
 
 class GameDataset(Dataset):
-    SHARED_FEATURES = [
-        'HOME_GAME',
-        'BACK_TO_BACK',
-        'WELL_RESTED',
-        'ROAD_GAMES_STREAK',
-        'GAMES_REMAINING',
-        'SEASON_PROGRESS',
-        'SEASON_END_PHASE',
-        'REGULAR_SEASON_GAME',
-        'IS_PLAYOFF',
-        'MONTH',
-        'DAY_OF_WEEK',
-        'WEEKEND',
-        'TEAM_WIN_RATE_10',
-        'TEAM_WINNING_STREAK',
-        'TEAM_LOSING_STREAK',
-        'TEAM_OFFENSE',
-        'OPPONENT_OFFENSE',
-        'HIGH_OFFENSE_TEAM',
-        'OPPONENT_STRENGTH',
-        'STRONG_OPPONENT',
-        'WEAK_OPPONENT',
-        'HOME_TEAM_W_PCT',
-        'AWAY_TEAM_W_PCT',
-        'TEAM_POSITION',
-        'OPPONENT_POSITION',
-    ]
+    SHARED_FEATURES = SHARED_FEATURES
+    PLAYER_FEATURES = PLAYER_FEATURES
+    WIN_FEATURES = WIN_FEATURES
+    INJURY_FEATURES = INJURY_FEATURES
 
-    PLAYER_FEATURES = [
-        'AGE',
-        'PLAYER_HEIGHT',
-        'PLAYER_WEIGHT',
-        'BMI',
-        'AGE_GROUP',
-        'HEAVY_PLAYER',
-        'YEARS_IN_LEAGUE',
-        'IS_ROOKIE',
-        'IS_VETERAN',
-        'DRAFT_YEAR',
-        'IS_GUARD',
-        'IS_FORWARD',
-        'IS_CENTER',
-        'IS_BIG',
-        'NET_RATING_real',
-        'USG_PCT',
-        'OREB_PCT',
-        'DREB_PCT',
-        'PLAYER_IMPORTANCE',
-        'GP_real',
-        'START_RATIO',
-        'AVAILABILITY',
-        'IS_STARTER',
-        'DAYS_REST',
-        'MIN_INT_LAG1',
-        'PLUS_MINUS_LAG1',
-        'LOW_USAGE_LAG1',
-        'RECENT_MIN_3',
-        'RECENT_MIN_5',
-        'RECENT_MIN_10',
-        'MIN_TREND',
-        'WORKLOAD_SPIKE',
-        'MAX_MIN_5',
-        'CONSISTENT_HEAVY',
-        'RECENT_PERFORMANCE',
-        'RATING'
-    ]
-
-    WIN_FEATURES = [
-        'HOME_GAME',
-        'SEASON_END_PHASE',
-        'IS_PLAYOFF',
-        'BACK_TO_BACK',
-        'TEAM_WIN_RATE_10',
-        'TEAM_WINNING_STREAK',
-        'TEAM_LOSING_STREAK',
-        'TEAM_OFFENSE',
-        'OPPONENT_OFFENSE',
-        'HIGH_OFFENSE_TEAM',
-        'OPPONENT_STRENGTH',
-        'STRONG_OPPONENT',
-        'WEAK_OPPONENT',
-        'TEAM_STRENGTH_DIFF',
-        'FAVORABLE_MATCHUP',
-        'TOUGH_MATCHUP',
-        'HOME_TEAM_W_PCT',
-        'AWAY_TEAM_W_PCT',
-        'TEAM_POSITION',
-        'OPPONENT_POSITION',
-    ]
-
-    INJURY_FEATURES = [
-        'AGE',
-        'BMI',
-        'AGE_GROUP',
-        'HEAVY_PLAYER',
-        'YEARS_IN_LEAGUE',
-        'DAYS_REST',
-        'BACK_TO_BACK',
-        'WELL_RESTED',
-        'PREV_INJURED',
-        'INJURY_HISTORY_INDEX',
-        'HAS_INJURY_HISTORY',
-        'INJURY_COUNT_SEASON',
-        'INJURY_NEARBY_PAST',
-        'CONDITION',
-        'POOR_CONDITION',
-        'MIN_INT_LAG1',
-        'LOW_USAGE_LAG1',
-        'RECENT_MIN_3',
-        'RECENT_MIN_5',
-        'RECENT_MIN_10',
-        'MIN_TREND',
-        'WORKLOAD_SPIKE',
-        'MAX_MIN_5',
-        'CONSISTENT_HEAVY',
-        'FATIGUE_RISK_LAG1',
-        'B2B_HEAVY_RISK_LAG1',
-        'PURE_FATIGUE_RISK_LAG1',
-        'ANY_FATIGUE_LAG1',
-        'IS_INJURED' # ?
-    ]
 
     def __init__(self, csv_path):
         self.df = pd.read_csv(csv_path)
