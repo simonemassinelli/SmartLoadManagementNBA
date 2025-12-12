@@ -123,7 +123,7 @@ class GameDataset(Dataset):
         'B2B_HEAVY_RISK_LAG1',
         'PURE_FATIGUE_RISK_LAG1',
         'ANY_FATIGUE_LAG1',
-        'IS_INJURED'
+        'IS_INJURED' # ?
     ]
 
     def __init__(self, csv_path):
@@ -149,10 +149,14 @@ class GameDataset(Dataset):
         print(f"Win: {len(self.WIN_FEATURES)}")
         print(f"Injury:  {len(self.INJURY_FEATURES)}")
         print(f"Total features: {self.count_features()}")
+        print(f"Total unique features: {self.count_unique_features()}")
 
 
     def count_features(self):
         return len(self.PLAYER_FEATURES) + len(self.INJURY_FEATURES) + len(self.SHARED_FEATURES) + len(self.WIN_FEATURES)
+
+    def count_unique_features(self):
+        return len(set(self.PLAYER_FEATURES + self.INJURY_FEATURES + self.SHARED_FEATURES + self.WIN_FEATURES))
 
 
     def _prepare_games(self):
@@ -230,6 +234,7 @@ class GameDataset(Dataset):
         all_features.update(self.WIN_FEATURES)
         all_features.update(self.INJURY_FEATURES)
         all_features.update(['MIN_INT', 'TEAM_WON', 'SEASON', 'PLAYER_TEAM', 'GAME_DATE_EST'])
+        all_features.update(['GAME_ID'])
         missing = [feature for feature in all_features if feature not in self.df.columns]
 
         if missing:
