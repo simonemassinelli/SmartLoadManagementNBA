@@ -4,7 +4,7 @@ from pandas import read_csv
 
 
 def load_data():
-    data_path = "../../data/initial_FE.csv"
+    data_path = "../../data/nba_game_features_final.csv"
     return read_csv(data_path)
 
 
