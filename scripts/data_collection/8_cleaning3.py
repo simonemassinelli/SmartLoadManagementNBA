@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 path1 = r"C:\Users\casam\OneDrive\Desktop\Simone\PycharmProjects\SmartLoadManagementNBA\simone_cleaned.csv"
 path2 = r"C:\Users\casam\OneDrive\Desktop\Simone\PycharmProjects\SmartLoadManagementNBA\DS_with_Ratings.csv"
@@ -6,20 +7,20 @@ path2 = r"C:\Users\casam\OneDrive\Desktop\Simone\PycharmProjects\SmartLoadManage
 prev = pd.read_csv(path1)
 final_df = pd.read_csv(path2)
 
-to_keep = ['GAME_DATE_EST', 'PTS_home', 'PTS_away', 'PLAYER_NAME', 'COMMENT', 'HOME_TEAM', 'AWAY_TEAM',
-           'PLAYER_TEAM', 'POINTS_DIFF', 'MIN_INT', 'SEASON', 'RATING', 'AGE', 'PLAYER_HEIGHT', 'PLAYER_WEIGHT',
-           'DRAFT_YEAR', 'GP', 'PLUS_MINUS', 'OREB_PCT', 'DREB_PCT', 'USG_PCT', 'POS']
-
-final_df = final_df[to_keep]
-
-print(len(prev), len(final_df))
-
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 pd.set_option('display.width', 200)
 pd.set_option('display.max_colwidth', None)
 
-final_df = final_df[~final_df['AGE'].isnull()]
+final_df = final_df.sort_values(['PLAYER_NAME', 'SEASON'])
+
+cols_to_fill = ['PLAYER_HEIGHT', 'PLAYER_WEIGHT', 'DRAFT_YEAR', 'GP', 'NET_RATING', 'OREB_PCT', 'DREB_PCT', 'USG_PCT', 'POS']
+
+final_df[cols_to_fill] = final_df.groupby('PLAYER_NAME')[cols_to_fill].ffill()
+final_df['AGE'] = final_df['AGE'].fillna(final_df.groupby('PLAYER_NAME')['AGE'].shift(1) + 1)
+
+final_df[cols_to_fill] = final_df.groupby('PLAYER_NAME')[cols_to_fill].bfill()
+final_df['AGE'] = final_df['AGE'].fillna(final_df.groupby('PLAYER_NAME')['AGE'].shift(-1) - 1)
 
 avg_pg = final_df.loc[final_df['POS'] == 'PG', 'PLAYER_HEIGHT'].mean()
 avg_sg = final_df.loc[final_df['POS'] == 'SG', 'PLAYER_HEIGHT'].mean()
@@ -32,9 +33,13 @@ t2 = (avg_sg + avg_sf) / 2
 t3 = (avg_sf + avg_pf) / 2
 t4 = (avg_pf + avg_c) / 2
 
+
 def get_pos(row):
     if pd.notna(row['POS']):
         return row['POS']
+
+    if pd.isna(row['PLAYER_HEIGHT']):
+        return 'SF'
 
     h = row['PLAYER_HEIGHT']
 
@@ -48,6 +53,7 @@ def get_pos(row):
         return 'PF'
     else:
         return 'C'
+
 
 final_df['POS'] = final_df.apply(get_pos, axis=1)
 
@@ -63,6 +69,7 @@ def clean_plus_minus(row):
     except (ValueError, TypeError):
         return 0
 
+
 final_df['PLUS_MINUS'] = final_df.apply(clean_plus_minus, axis=1)
 
 cols_to_int = ['PTS_home', 'PTS_away', 'POINTS_DIFF', 'RATING', 'AGE', 'GP', 'PLUS_MINUS']
@@ -73,7 +80,14 @@ for col in cols_to_int:
 final_df[cols_to_int] = final_df[cols_to_int].fillna(0)
 final_df[cols_to_int] = final_df[cols_to_int].astype(int)
 
-final_df.info()
-print(final_df.describe(include = 'all'))
+final_df = final_df.drop('GS', axis=1)
 
-final_df = final_df.to_csv('df_to_analyze.csv')
+final_df = final_df[final_df['MIN_INT']<66]
+
+final_df['NET_RATING_real'] = final_df.groupby(['PLAYER_NAME', 'SEASON'])['PLUS_MINUS'].transform('mean')
+final_df = final_df.drop('NET_RATING', axis = 1)
+
+final_df.info()
+print(final_df.describe(include='all'))
+
+final_df.to_csv('df_to_analyze.csv', index=False)

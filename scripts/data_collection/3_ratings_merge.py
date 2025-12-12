@@ -54,4 +54,5 @@ normalized_df.drop(rating_cols, axis=1, inplace=True)
 normalized_df.to_csv("all_players_ratings_normalized.csv")
 
 print(normalized_df.head())
+print(len(normalized_df))
 print(normalized_df.loc[normalized_df['6_norm'] > 99])
