@@ -57,8 +57,12 @@ def get_dataloaders(csv_path, batch_size, train_split, val_split):
     return train_loader, val_loader, test_loader
 
 
-
-
-
 path = '../../data/nba_game_features_final.csv'
-get_dataloaders(path, 32, 0.8, 0.1)
+train_loader, val_loader, test_loader = get_dataloaders(path, 32, 0.8, 0.1)
+
+batch = next(iter(train_loader))
+print(f"Sample batch:")
+
+for key, value in batch.items():
+    if hasattr(value, 'shape'):
+        print(f"{key:20s}:{value.shape}")

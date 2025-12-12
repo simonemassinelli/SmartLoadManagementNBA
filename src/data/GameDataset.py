@@ -222,9 +222,6 @@ class GameDataset(Dataset):
             'won': torch.FloatTensor([won]),
             'injuries': torch.FloatTensor(injuries),
             'num_players': num_players,
-            'season': game['season'],
-            'team': game['team'],
-            'date': game['date'],
         }
 
     def _verify_columns(self):
