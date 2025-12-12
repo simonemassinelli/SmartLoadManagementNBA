@@ -1,7 +1,7 @@
 from src.features.FeatureEngineer import FeatureEngineer
 
 
-dataset_path = '../../data/player_condition.csv'
+dataset_path = '../../data/df_with_standings.csv'
 engineer = FeatureEngineer(dataset_path)
 df_processed = engineer.engineer_all_features()
 

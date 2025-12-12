@@ -81,6 +81,8 @@ def check_time_features(df):
         'MONTH': {'type': 'numeric'},
         'DAY_OF_WEEK': {'type': 'numeric'},
         'WEEKEND': {'type': 'binary', 'expected_values': [0, 1]},
+        'CUMULATIVE_WL' : {'type': 'numeric'},
+        'ROAD_GAMES_STREAK' : {'type': 'numeric'}
     }
 
     investigate_features(features)
@@ -110,6 +112,7 @@ def check_players_features(df):
         'IS_ROOKIE': {'type': 'binary', 'expected_values': [0, 1]},
         'IS_VETERAN': {'type': 'binary', 'expected_values': [0, 1]},
         'AVAILABILITY': {'type': 'numeric'},
+        'IS_STARTER' : {'type': 'binary', 'expected_values': [0, 1]},
     }
 
     investigate_features(features)
@@ -171,9 +174,9 @@ def check_physical_features(df):
     investigate_features(features)
 
 df = load_data()
-check_basic_features(df)
-# check_time_features(df)
-# check_players_features(df)
+# check_basic_features(df)
+check_time_features(df)
+check_players_features(df)
 # check_rolling_features(df)
 # check_opponent_features(df)
 # check_team_features(df)

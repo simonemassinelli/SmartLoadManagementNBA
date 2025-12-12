@@ -75,6 +75,15 @@ class FeatureEngineer:
         self.df['IS_VETERAN'] = (self.df['YEARS_IN_LEAGUE'] >= 5).astype(int)
         self.df['AVAILABILITY'] = (self.df['GP'] / 82.0).clip(upper = 1.0)
 
+        if {'GS', 'GP'}.issubset(self.df.columns):
+            gp_safe = self.df['GP'].replace(0, np.nan)
+            start_ratio = self.df['GS'] / gp_safe
+
+            self.df['IS_STARTER'] = (start_ratio > 0.5).astype(float)
+            self.df['IS_STARTER'] = self.df['IS_STARTER'].fillna(0).astype(int)
+        else:
+            self.df['IS_STARTER'] = 0
+
     def time_features(self):
         self.df['DAYS_REST'] = (
             self.df.groupby('PLAYER_NAME')['GAME_DATE_EST']
@@ -86,6 +95,11 @@ class FeatureEngineer:
         self.df['BACK_TO_BACK'] = (self.df['DAYS_REST'] == 1).astype(int)
         # Not sure about the number of days
         self.df['WELL_RESTED'] = (self.df['DAYS_REST'] >= 3).astype(int)
+
+        self.df['CUMULATIVE_WL'] = (
+            self.df.groupby(['PLAYER_NAME', 'SEASON'])
+            .cumcount()
+        )
 
         team_games = (
             self.df[['SEASON', 'PLAYER_TEAM', 'GAME_DATE_EST']]
@@ -117,6 +131,27 @@ class FeatureEngineer:
         self.df['MONTH'] = self.df['GAME_DATE_EST'].dt.month
         self.df['DAY_OF_WEEK'] = self.df['GAME_DATE_EST'].dt.dayofweek
         self.df['WEEKEND'] = (self.df['DAY_OF_WEEK'] >= 5).astype(int)
+
+        def _road_streak(series):
+            streak = 0
+            out = []
+            for is_home in series:
+                if is_home == 0:
+                    streak += 1
+                else:
+                    streak = 0
+                out.append(streak)
+            return pd.Series(out, index = series.index)
+
+        if 'HOME_GAME' in self.df.columns:
+            self.df['ROAD_GAMES_STREAK'] = (
+                self.df
+                .groupby(['PLAYER_NAME', 'SEASON'])['HOME_GAME']
+                .transform(_road_streak)
+            )
+        else:
+            self.df['ROAD_GAMES_STREAK'] = 0
+
 
     def rolling_features(self):
 
