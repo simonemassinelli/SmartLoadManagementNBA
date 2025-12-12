@@ -4,38 +4,117 @@ import numpy as np
 import torch
 
 class GameDataset(Dataset):
-
-
     SHARED_FEATURES = [
-        'HOME_GAME', 'BACK_TO_BACK', 'OPPONENT_STRENGTH',
-        'GAMES_REMAINING', 'SEASON_END_PHASE', 'SEASON_PROGRESS',
-        'TEAM_WIN_RATE_10', 'TEAM_WINNING_STREAK', 'TEAM_LOSING_STREAK',
-        'HIGH_SCORING', 'BLOWOUT', 'CLOSE_GAME',
-        'MONTH', 'DAY_OF_WEEK', 'WEEKEND', 'IS_PLAYOFF',
-        'TEAM_OFFENSE', 'OPPONENT_OFFENSE', 'HIGH_OFFENSE_TEAM',
-        'REGULAR_SEASON_GAME'
+        'HOME_GAME',
+        'BACK_TO_BACK',
+        'WELL_RESTED',
+        'ROAD_GAMES_STREAK',
+        'GAMES_REMAINING',
+        'SEASON_PROGRESS',
+        'SEASON_END_PHASE',
+        'REGULAR_SEASON_GAME',
+        'IS_PLAYOFF',
+        'MONTH',
+        'DAY_OF_WEEK',
+        'WEEKEND',
+        'TEAM_WIN_RATE_10',
+        'TEAM_WINNING_STREAK',
+        'TEAM_LOSING_STREAK',
+        'TEAM_OFFENSE',
+        'OPPONENT_OFFENSE',
+        'HIGH_OFFENSE_TEAM',
+        'OPPONENT_STRENGTH',
+        'STRONG_OPPONENT',
+        'WEAK_OPPONENT',
+        'HOME_TEAM_POSITION',
+        'HOME_TEAM_W_PCT',
+        'AWAY_TEAM_POSITION',
+        'AWAY_TEAM_W_PCT'
     ]
 
     PLAYER_FEATURES = [
-        'AGE', 'PLAYER_HEIGHT', 'PLAYER_WEIGHT', 'YEARS_IN_LEAGUE',
-        'RATING', 'USG_PCT', 'NET_RATING_real', 'OREB_PCT', 'DREB_PCT',
-        'PLAYER_IMPORTANCE', 'START_RATIO', 'AVAILABILITY',
-        'IS_GUARD', 'IS_FORWARD', 'IS_CENTER', 'IS_BIG', 'BMI',
-        'IS_ROOKIE', 'IS_VETERAN', 'IS_STARTER'
+        'AGE',
+        'PLAYER_HEIGHT',
+        'PLAYER_WEIGHT',
+        'BMI',
+        'AGE_GROUP',
+        'YEARS_IN_LEAGUE',
+        'IS_ROOKIE',
+        'IS_VETERAN',
+        'RATING',
+        'NET_RATING_real',
+        'USG_PCT',
+        'OREB_PCT',
+        'DREB_PCT',
+        'PLAYER_IMPORTANCE',
+        'START_RATIO',
+        'AVAILABILITY',
+        'IS_STARTER',
+        'IS_GUARD',
+        'IS_FORWARD',
+        'IS_CENTER',
+        'IS_BIG',
+        'HEAVY_PLAYER',
+        'MIN_INT_LAG1',
+        'PLUS_MINUS_LAG1',
+        'LOW_USAGE_LAG1',
+        'RECENT_MIN_3',
+        'RECENT_MIN_5',
+        'RECENT_MIN_10',
+        'MIN_TREND',
+        'WORKLOAD_SPIKE',
+        'MAX_MIN_5',
+        'CONSISTENT_HEAVY',
+        'RECENT_PERFORMANCE',
+        'DAYS_REST',
+        'DRAFT_YEAR',
+        'GP_real'
     ]
 
     WIN_FEATURES = [
-        'TEAM_OFFENSE', 'OPPONENT_OFFENSE', 'TEAM_WIN_RATE_10',
-        'OPPONENT_STRENGTH', 'STRONG_OPPONENT', 'WEAK_OPPONENT',
-        'HOME_GAME', 'SEASON_END_PHASE', 'IS_PLAYOFF', 'RATING_DIFF'
+        'HOME_GAME',
+        'TEAM_WIN_RATE_10',
+        'TEAM_WINNING_STREAK',
+        'TEAM_LOSING_STREAK',
+        'TEAM_OFFENSE',
+        'OPPONENT_OFFENSE',
+        'HIGH_OFFENSE_TEAM',
+        'OPPONENT_STRENGTH',
+        'STRONG_OPPONENT',
+        'WEAK_OPPONENT',
+        'RATING_DIFF',
+        'SEASON_END_PHASE',
+        'IS_PLAYOFF'
     ]
 
     INJURY_FEATURES = [
-        'AGE', 'RECENT_MIN_5', 'BACK_TO_BACK', 'PREV_INJURED',
-        'FATIGUE_RISK', 'B2B_HEAVY_RISK', 'MIN_TREND',
-        'WORKLOAD_SPIKE', 'POOR_CONDITION', 'INJURY_HISTORY_INDEX',
-        'HAS_INJURY_HISTORY', 'CONDITION', 'ANY_FATIGUE',
-        'PURE_FATIGUE_RISK', 'YEARS_IN_LEAGUE'
+        'AGE',
+        'BMI',
+        'YEARS_IN_LEAGUE',
+        'DAYS_REST',
+        'BACK_TO_BACK',
+        'WELL_RESTED',
+        'PREV_INJURED',
+        'INJURY_HISTORY_INDEX',
+        'HAS_INJURY_HISTORY',
+        'CONDITION',
+        'POOR_CONDITION',
+        'MIN_INT_LAG1',
+        'RECENT_MIN_3',
+        'RECENT_MIN_5',
+        'RECENT_MIN_10',
+        'MIN_TREND',
+        'WORKLOAD_SPIKE',
+        'MAX_MIN_5',
+        'CONSISTENT_HEAVY',
+        'FATIGUE_RISK_LAG1',
+        'B2B_HEAVY_RISK_LAG1',
+        'PURE_FATIGUE_RISK_LAG1',
+        'ANY_FATIGUE_LAG1',
+        'AGE_GROUP',
+        'INJURY_COUNT_SEASON',
+        'IS_INJURED',
+        'LOW_USAGE_LAG1'
     ]
 
     def __init__(self, csv_path):
@@ -51,6 +130,12 @@ class GameDataset(Dataset):
         self.games = self._prepare_games()
         print("Dataset ready")
         print(f"Total games: {len(self.games):,}")
+        print(f"Features")
+        print(f"Shared: {len(self.SHARED_FEATURES)}")
+        print(f"Player: {len(self.PLAYER_FEATURES)}")
+        print(f"Win: {len(self.WIN_FEATURES)}")
+        print(f"Injury:  {len(self.INJURY_FEATURES)}")
+        print(f"Total features: {self.count_features()}")
 
 
     def count_features(self):
@@ -66,11 +151,13 @@ class GameDataset(Dataset):
             if len(group) == 0:
                 continue
 
-            group = group.sort_values('MIN_INT', ascending = False)
+            sort_col = 'MIN_INT_LAG1' if 'MIN_INT_LAG1' in group.columns else 'PLAYER_IMPORTANCE'
+
+            group = group.sort_values(sort_col, ascending = False)
             games.append({
                 'season' : season,
                 'team' : team,
-                'date' : date,
+                'date' : pd.to_datetime(date),
                 'data' : group.reset_index(drop = True)
             })
         return games

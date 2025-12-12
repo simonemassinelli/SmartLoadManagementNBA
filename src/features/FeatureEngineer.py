@@ -222,7 +222,6 @@ class FeatureEngineer:
             right_on=['SEASON', 'TEAM_LOOKUP'],
             how='left'
         ).rename(columns={'TEAM_AVG_RATING': 'HOME_TEAM_RATING'})
-
         self.df = self.df.drop(columns=['TEAM_LOOKUP'])
 
         self.df = self.df.merge(
@@ -230,9 +229,7 @@ class FeatureEngineer:
             left_on=['SEASON', 'AWAY_TEAM'],
             right_on=['SEASON', 'TEAM_LOOKUP'],
             how='left'
-        ).rename(columns={'TEAM_AVG_RATING': 'AWAY_TEAM_RATING'})
-
-        self.df = self.df.drop(columns=['TEAM_LOOKUP'])
+        ).rename(columns={'TEAM_AVG_RATING': 'AWAY_TEAM_RATING'}).drop(columns = ['TEAM_LOOKUP'])
 
         self.df['OPPONENT_STRENGTH'] = np.where(
             self.df['HOME_GAME'] == 1,
@@ -242,30 +239,67 @@ class FeatureEngineer:
 
         self.df['OPPONENT_STRENGTH'] = self.df['OPPONENT_STRENGTH'].fillna(75)
 
-        mean_strength = self.df['OPPONENT_STRENGTH'].mean()
-        std_strength = self.df['OPPONENT_STRENGTH'].std()
+        team_totals = (
+            self.df.groupby(['SEASON', 'PLAYER_TEAM'])
+            .agg(
+                TEAM_TOTAL_RATING=('RATING', 'sum'),
+                TEAM_TOTAL_GP=('GP_real', 'sum')
+            )
+            .reset_index()
+        )
+
+        self.df = self.df.merge(
+            team_totals,
+            on = ['SEASON', 'PLAYER_TEAM'],
+            how = 'left'
+        )
+        denom = (self.df['TEAM_TOTAL_GP'] - self.df['GP_real']).replace(0, np.nan)
+
+        self.df['TEAM_RATING_WO_PLAYER'] = (
+            (self.df['TEAM_TOTAL_RATING'] - self.df['RATING']) / denom
+        ).fillna(self.df['TEAM_AVG_RATING'])
+        self.df['TEAM_RATING_W_PLAYER'] = self.df['TEAM_AVG_RATING']
+
+        self.df['PLAYER_IMPORTANCE'] = (
+            self.df['TEAM_RATING_W_PLAYER'] - self.df['TEAM_RATING_WO_PLAYER']
+        )
+
+        self.df['TEAM_POSITION'] = np.where(
+            self.df['PLAYER_TEAM'] == self.df['HOME_TEAM'],
+            self.df['HOME_TEAM_POSITION'],
+            self.df['AWAY_TEAM_POSITION']
+        )
+
+        self.df['OPPONENT_POSITION'] = np.where(
+            self.df['PLAYER_TEAM'] == self.df['HOME_TEAM'],
+            self.df['AWAY_TEAM_POSITION'],
+            self.df['HOME_TEAM_POSITION']
+        )
 
         self.df['STRONG_OPPONENT'] = (
-            self.df['OPPONENT_STRENGTH'] > (mean_strength + 0.5 * std_strength)
+            self.df['OPPONENT_POSITION'] < self.df['TEAM_POSITION']
         ).astype(int)
 
         self.df['WEAK_OPPONENT'] = (
-            self.df['OPPONENT_STRENGTH'] < (mean_strength - 0.5 * std_strength)
+            self.df['OPPONENT_POSITION'] > self.df['TEAM_POSITION']
         ).astype(int)
 
-        self.df['RATING_DIFF'] = (
-            self.df['RATING'] - self.df['OPPONENT_STRENGTH']
+
+        self.df.drop(['HOME_TEAM_POSITION', 'AWAY_TEAM_POSITION'], axis=1, inplace=True)
+
+        self.df['TEAM_STRENGTH_DIFF'] = (
+                self.df['OPPONENT_POSITION'] - self.df['TEAM_POSITION']
         )
 
-        favorable_threshold = self.df['RATING_DIFF'].quantile(0.67)
-        tough_threshold = self.df['RATING_DIFF'].quantile(0.33)
+        favorable_threshold = self.df['TEAM_STRENGTH_DIFF'].quantile(0.67)
+        tough_threshold = self.df['TEAM_STRENGTH_DIFF'].quantile(0.33)
 
         self.df['FAVORABLE_MATCHUP'] = (
-            self.df['RATING_DIFF'] > favorable_threshold
+                self.df['TEAM_STRENGTH_DIFF'] > favorable_threshold
         ).astype(int)
 
         self.df['TOUGH_MATCHUP'] = (
-            self.df['RATING_DIFF'] < tough_threshold
+                self.df['TEAM_STRENGTH_DIFF'] < tough_threshold
         ).astype(int)
 
         self.df = self.df.drop(columns=['HOME_TEAM_RATING', 'AWAY_TEAM_RATING'])
@@ -304,6 +338,12 @@ class FeatureEngineer:
         self.df['PREV_INJURED'] = (
             self.df.groupby('PLAYER_NAME')['IS_INJURED']
             .shift(1)
+            .fillna(0)
+        )
+
+        self.df['INJURY_NEARBY_PAST'] = (
+            self.df.groupby('PLAYER_NAME')['IS_INJURED']
+            .transform(lambda x: x.shift(1).rolling(window=7, min_periods=1).max())
             .fillna(0)
         )
 
@@ -393,3 +433,14 @@ class FeatureEngineer:
                 .shift(1)
                 .fillna(0)
             )
+
+    def get_feature_columns(self):
+        return [col for col in self.df.columns
+                if col.endswith('_LAG1')
+                or col in [
+                    'DAYS_REST', 'BACK_TO_BACK', 'WELL_RESTED',
+                    'SEASON_PROGRESS', 'IS_PLAYOFF',
+                    'OPPONENT_STRENGTH', 'STRONG_OPPONENT', 'WEAK_OPPONENT',
+                    'PLAYER_IMPORTANCE',
+                    'AGE', 'BMI', 'IS_GUARD', 'IS_BIG'
+                ]]
