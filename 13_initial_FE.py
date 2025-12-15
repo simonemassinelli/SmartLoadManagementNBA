@@ -11,6 +11,8 @@ df = pd.read_csv(path)
 df['GAME_DATE_EST']=pd.to_datetime(df['GAME_DATE_EST'])
 df= df.sort_values(by=['GAME_DATE_EST', 'PLAYER_NAME'])
 
+df['HOME_GAME'] = (df['PLAYER_TEAM'] == df['HOME_TEAM']).astype(int)
+
 df['DAYS_SINCE_LG']= df.groupby(['PLAYER_NAME', 'SEASON'])['GAME_DATE_EST'].diff().dt.days.fillna(0)
 df['CUMULATIVE_WL']= df.groupby(['PLAYER_NAME', 'SEASON']).cumcount()
 df['START_RATIO']= df['GS_real']/ df['GP_real']

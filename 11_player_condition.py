@@ -13,36 +13,82 @@ df['GAME_DATE_EST'] = pd.to_datetime(df['GAME_DATE_EST'])
 df = df.sort_values(by=['PLAYER_NAME', 'GAME_DATE_EST'])
 df = df.set_index('GAME_DATE_EST')
 
-has_not_played = df['COMMENT'].notna()
-is_strong = df['RATING'] > 80
-is_coach_dec = df['COMMENT'].str.contains("Coach's Decision", na=False, case=False)
+non_injury_patterns = [
+    "coach's decision",
+    "personal",
+    "suspension",
+    "suspended",
+    "trade",
+    "rest",
+    "d-league",
+    "nbdl",
+    "developmental",
+    "family",
+    "bereavement",
+    "birth of child",
+    "visa",
+    "travel",
+    "organizational",
+    "conditioning",
+    "maintenance",
+    "ineligible",
+    "training",
+    "not with team",
+]
 
-mask_change_to_injury = has_not_played & (is_strong | (~is_strong & ~is_coach_dec))
+injury_indicators = [
+    'sore', 'sprain', 'strain', 'fracture', 'torn', 'injury',
+    'knee', 'ankle', 'back', 'shoulder', 'hip', 'foot', 'hamstring',
+    'calf', 'groin', 'concussion', 'illness', 'flu', 'surgery',
+    'contusion', 'bruise', 'achilles', 'elbow', 'wrist', 'thigh',
+    'quad', 'sick', 'ill'
+]
 
-df.loc[mask_change_to_injury, 'COMMENT'] = "DNP - Injury/Illness"
 
-df['IS_INJURED'] = np.where(df['COMMENT'].str.contains('Injury', na=False, case=False), 1, 0)
+def is_injury(comment):
+    if pd.isna(comment) or str(comment).strip() == '':
+        return 0
 
-df['INJURY_NEARBY'] = df.groupby('PLAYER_NAME')['IS_INJURED'].transform(
-    lambda x: x.rolling(window=7, center=True, min_periods=1).max())
+    comment_lower = str(comment).lower().strip()
 
-mask_weak_context_change = (~is_strong) & is_coach_dec & (df['INJURY_NEARBY'] == 1)
-df.loc[mask_weak_context_change, 'COMMENT'] = "DNP - Injury/Illness"
+    for pattern in non_injury_patterns:
+        if pattern in comment_lower:
+            has_injury_indicator = any(ind in comment_lower for ind in injury_indicators)
+            if not has_injury_indicator:
+                return 0
 
-df = df.drop(columns=['INJURY_NEARBY'])
-df['IS_INJURED'] = np.where(df['COMMENT'].str.contains('Injury', na=False, case=False), 1, 0)
+    return 1
+
+
+df['IS_INJURED'] = df['COMMENT'].apply(is_injury)
+
+print(f"Injury rate: {df['IS_INJURED'].mean():.2%}")
 
 df['INJURY_HISTORY_INDEX'] = df.groupby('PLAYER_NAME')['IS_INJURED'].transform(
-    lambda x: x.ewm(halflife='100 days', times=x.index).mean())
+    lambda x: x.ewm(halflife='100 days', times=x.index).mean()
+)
 
 df = df.reset_index()
 
 df['CONDITION'] = 100 * (1 - df['INJURY_HISTORY_INDEX'])
 df['CONDITION'] = df['CONDITION'].round(1)
 
-df_DG = df[df['PLAYER_NAME'] == 'Danilo Gallinari']
+print(f"\nTotal rows: {len(df)}")
+print(f"Unique players: {df['PLAYER_NAME'].nunique()}")
 
-print(len(df))
-print(df_DG[['GAME_DATE_EST', 'PLAYER_NAME', 'COMMENT', 'IS_INJURED', 'CONDITION']])
+print(f"\nInjury stats:")
+print(f"Total injuries: {df['IS_INJURED'].sum():,}")
+print(f"Injury rate: {df['IS_INJURED'].mean():.2%}")
+print(f"Players with injuries: {df[df['IS_INJURED'] == 1]['PLAYER_NAME'].nunique()}")
 
-df.to_csv('player_condition.csv', index=False)
+not_injured = df[(df['COMMENT'].notna()) & (df['IS_INJURED'] == 0)]['COMMENT'].value_counts()
+print("\nClassified as NOT injury:")
+print(not_injured.head(10))
+
+injured = df[(df['COMMENT'].notna()) & (df['IS_INJURED'] == 1)]['COMMENT'].value_counts()
+print("\nClassified as injury:")
+print(injured.head(50))
+
+
+df.to_csv("player_condition.csv", index=False)
+print(f"\nSaved to player_condition.csv")
