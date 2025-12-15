@@ -1,66 +1,129 @@
-import torch
 import numpy as np
+import torch
+import copy
 
-AVG_INJURY_GAMES = 7  # average NBA injury duration in games
+AVG_INJURY_GAMES = 7
 
 
-def optimize_minutes_today(model, game_input, candidate_minutes_list, n_simulations=1000, device='cpu'):
-    """
-    Optimize minutes allocation considering injury risks over average injury duration.
+def generate_initial_population(num_players, max_players, n_samples=50, step=4, total_minutes=240):
+    """Generates random valid minute distributions summing to total_minutes."""
+    candidates = []
+    n_starters = min(5, num_players)
+    n_bench = num_players - n_starters
 
-    Parameters:
-    - model: trained SmartLoadModel
-    - game_input: dictionary of single game features (player slots padded)
-    - candidate_minutes_list: list of arrays, each array is candidate minutes allocation
-    - n_simulations: number of Monte Carlo simulations
-    - device: 'cpu' or 'cuda'
+    for _ in range(n_samples):
+        minutes = np.zeros(num_players)
 
-    Returns:
-    - best_minutes: minutes allocation that maximizes objective
-    - best_score: objective value
-    """
-    model.eval()
-    game_batch_template = {k: torch.tensor(v, dtype=torch.float32).unsqueeze(0).to(device)
-    if isinstance(v, np.ndarray) else v for k, v in game_input.items()}
+        # Random initialization
+        starter_mins = np.random.randint(28 // step, 40 // step + 1, n_starters) * step
+        bench_mins = np.random.randint(0 // step, 20 // step + 1, n_bench) * step
 
-    best_score = -np.inf
-    best_minutes = None
+        minutes[:n_starters] = starter_mins
+        if n_bench > 0:
+            minutes[n_starters:] = bench_mins
 
-    for minutes in candidate_minutes_list:
-        game_batch_template['MIN_INT'] = torch.tensor(minutes, dtype=torch.float32).unsqueeze(0).to(device)
+        # Adjust to match exactly total_minutes
+        diff = total_minutes - minutes.sum()
+        while diff != 0:
+            idx = np.random.randint(0, num_players)
+            if diff > 0 and minutes[idx] + step <= 44:
+                minutes[idx] += step
+                diff -= step
+            elif diff < 0 and minutes[idx] - step >= 0:
+                minutes[idx] -= step
+                diff += step
 
-        with torch.no_grad():
-            preds_today = model(game_batch_template)
-            win_prob_today = torch.sigmoid(preds_today["win_logits"])[0, 0].item()
-            injury_probs = torch.sigmoid(preds_today["injury_logits"])[0].cpu().numpy()
+        padded = np.zeros(max_players)
+        padded[:num_players] = minutes
+        candidates.append(padded)
 
-        # simulate injuries over next AVG_INJURY_GAMES
-        future_win_probs = []
-        for _ in range(n_simulations):
-            injured_next_games = np.zeros(len(injury_probs))
-            # simulate whether each player gets injured today
-            injured_today = np.random.rand(len(injury_probs)) < injury_probs
-            injured_next_games += injured_today.astype(int) * AVG_INJURY_GAMES
+    return candidates
 
-            # construct masked input for future games (simplified: same as today)
-            future_win = 0
-            for g in range(AVG_INJURY_GAMES):
-                future_mask = (injured_next_games <= g).astype(float)  # 1 if available
-                future_game_input = game_input.copy()
-                future_game_input['player_mask'] = future_mask
-                future_game_batch = {k: torch.tensor(v, dtype=torch.float32).unsqueeze(0).to(device)
-                if isinstance(v, np.ndarray) else v for k, v in future_game_input.items()}
-                with torch.no_grad():
-                    fut_preds = model(future_game_batch)
-                    future_win += torch.sigmoid(fut_preds["win_logits"])[0, 0].item()
 
-            future_win_probs.append(future_win / AVG_INJURY_GAMES)
+def mutate_minutes(minutes, num_players, step=4):
+    """Swaps minutes between two players to explore new solutions."""
+    new_mins = minutes.copy()
+    idx1, idx2 = np.random.choice(num_players, 2, replace=False)
 
-        expected_future_win = np.mean(future_win_probs)
-        objective = win_prob_today + expected_future_win
+    if new_mins[idx1] >= step and new_mins[idx2] + step <= 44:
+        new_mins[idx1] -= step
+        new_mins[idx2] += step
 
-        if objective > best_score:
-            best_score = objective
-            best_minutes = minutes
+    return new_mins
 
-    return best_minutes, best_score
+
+def evaluate_lineup(model, game_input, minutes_array, n_simulations, avg_injury_games, device):
+    """Calculates objective: Win Probability Today + Expected Future Wins."""
+    current_input = copy.deepcopy(game_input)
+    current_input["MIN_INT"][0] = torch.tensor(minutes_array, dtype=torch.float32, device=device)
+
+    with torch.no_grad():
+        preds_today = model(current_input)
+        win_prob_today = torch.sigmoid(preds_today["win_logits"])[0, 0].item()
+        injury_probs = torch.sigmoid(preds_today["injury_logits"])[0].cpu().numpy()
+
+    future_win_totals = []
+
+    for _ in range(n_simulations):
+        # Simulate injuries based on today's risk
+        is_injured = np.random.rand(len(injury_probs)) < injury_probs
+        injured_games_left = is_injured.astype(int) * avg_injury_games
+        simulated_future_wins = 0.0
+
+        for g in range(avg_injury_games):
+            future_mask = (injured_games_left <= g).astype(float)
+            current_input["player_mask"][0] = torch.tensor(future_mask, dtype=torch.float32, device=device)
+
+            with torch.no_grad():
+                future_preds = model(current_input)
+                simulated_future_wins += torch.sigmoid(future_preds["win_logits"])[0, 0].item()
+
+        future_win_totals.append(simulated_future_wins)
+
+    expected_future_wins = np.mean(future_win_totals)
+    return win_prob_today + expected_future_wins
+
+
+def optimize_minutes_evolutionary(model, game_input, num_players, max_players,
+                                  generations=20, population_size=40, n_sims_per_eval=50, device="cpu"):
+    """Main Genetic Algorithm loop to optimize minutes."""
+    print(f"Starting optimization: {generations} generations, population {population_size}...")
+
+    candidates = generate_initial_population(num_players, max_players, n_samples=population_size)
+    best_overall_score = -np.inf
+    best_overall_minutes = None
+
+    for gen in range(generations):
+        scores = []
+
+        # Evaluate population
+        for mins in candidates:
+            s = evaluate_lineup(model, game_input, mins, n_simulations=n_sims_per_eval,
+                                avg_injury_games=AVG_INJURY_GAMES, device=device)
+            scores.append(s)
+
+            if s > best_overall_score:
+                best_overall_score = s
+                best_overall_minutes = mins.copy()
+
+        # Selection (Elitism)
+        sorted_indices = np.argsort(scores)[::-1]
+        n_elite = population_size // 4
+        top_indices = sorted_indices[:n_elite]
+        top_candidates = [candidates[i] for i in top_indices]
+
+        # Reproduction (Mutation)
+        new_candidates = []
+        new_candidates.extend(top_candidates)
+
+        while len(new_candidates) < population_size:
+            parent = top_candidates[np.random.randint(len(top_candidates))]
+            child = mutate_minutes(parent, num_players, step=4)
+            new_candidates.append(child)
+
+        candidates = new_candidates
+
+        if (gen + 1) % 5 == 0:
+            print(f"Generation {gen + 1}/{generations} - Best Score: {best_overall_score:.4f}")
+
+    return best_overall_minutes, best_overall_score
