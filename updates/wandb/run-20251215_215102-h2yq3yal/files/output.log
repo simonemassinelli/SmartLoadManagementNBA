@@ -1,0 +1,26 @@
+Max players: 19
+Dataset ready
+Total games: 37,697
+Features
+Shared: 25
+Player: 36
+Win: 20
+Injury:  29
+Total features: 110
+Total unique features: 76
+Total games: 37,697
+Unique dates: 2,995
+Avg games/day: 12.6
+Train: 30,279 games from 2,396 dates
+(2005-10-15 - 2016-11-23)
+Val: 3,980 games from 299 dates
+(2016-11-25 - 2018-02-26)
+Test: 3,438 games from 300 dates
+(2018-02-27 - 2019-06-13)
+Traceback (most recent call last):
+  File "D:\fds_final\SmartLoadManagementNBA\updates\model_training.py", line 92, in <module>
+    optimal_pos_weight = SmartLoadLoss.calculate_pos_weight(base_dataset, sample_size = 2000)
+  File "D:\fds_final\SmartLoadManagementNBA\updates\SmartLoadLoss.py", line 83, in calculate_pos_weight
+    indices = torch.randperm(len(dataset))[:sample_size]
+              ~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+KeyboardInterrupt

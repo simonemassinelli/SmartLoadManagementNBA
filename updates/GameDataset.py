@@ -2,7 +2,7 @@ from torch.utils.data import Dataset
 import pandas as pd
 import numpy as np
 import torch
-from src.data.features import SHARED_FEATURES, PLAYER_FEATURES, WIN_FEATURES, INJURY_FEATURES
+from updates.features import SHARED_FEATURES, PLAYER_FEATURES, WIN_FEATURES, INJURY_FEATURES
 
 
 class GameDataset(Dataset):

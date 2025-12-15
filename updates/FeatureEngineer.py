@@ -354,11 +354,7 @@ class FeatureEngineer:
             .shift(1)
             .fillna(0)
         )
-        self.df['INJURED_NEXT_GAME'] = (
-            self.df.groupby('PLAYER_NAME')['IS_INJURED']
-            .shift(-1)
-            .fillna(0)
-        )
+
 
         self.df['INJURY_NEARBY_PAST'] = (
             self.df.groupby('PLAYER_NAME')['IS_INJURED']
@@ -381,11 +377,6 @@ class FeatureEngineer:
             self.df['INJURY_COUNT_SEASON'] > 0
         ).astype(int)
 
-        self.df['INJURED_NEXT_GAME'] = (
-            self.df.groupby('PLAYER_NAME')['IS_INJURED']
-            .shift(-1)
-            .fillna(0)
-        )
 
         self.df['FATIGUE_RISK'] = (
             (self.df['MIN_INT'] > 35) & (self.df['USG_PCT'] > 0.25)

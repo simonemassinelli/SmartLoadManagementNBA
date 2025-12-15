@@ -1,6 +1,6 @@
 import pandas as pd
 
-from GameDataset_21 import GameDataset
+from updates.GameDataset import GameDataset
 from torch.utils.data import DataLoader, random_split, Subset
 
 
