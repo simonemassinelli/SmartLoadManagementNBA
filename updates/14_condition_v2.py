@@ -1,6 +1,6 @@
 import pandas as pd
 
-df = pd.read_csv("../../data/initial_FE_1.csv")
+df = pd.read_csv("../../data/initial_FE.csv")
 
 non_injury_patterns = [
     "coach's decision",
@@ -34,5 +34,5 @@ print(f"IS_INJURED rate: {df['IS_INJURED'].mean():.2%}")
 print("\nTop injury comments:")
 print(df.loc[df['IS_INJURED']==1, 'COMMENT'].value_counts().head(30))
 
-df.to_csv('../../data/initial_FE_1_fixed.csv', index=False)
+df.to_csv('../../data/initial_FE_fixed.csv', index=False)
 print("Saved!")
