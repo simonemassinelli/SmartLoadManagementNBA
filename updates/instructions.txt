@@ -1,0 +1,10 @@
+1. Update all files from the updates folder
+
+2. Update all paths
+14_condition_v2.py change path to initial_FE.csv (the last one you sent me in WhatsApp)
+update output path, if you want '../../data/initial_FE_fixed.csv'
+
+3. Run all other scripts to create features (remember to update paths)
+
+4. Run the model training script
+
