@@ -6,7 +6,7 @@ from src.model.SelfAttentionPooling import SelfAttentionPooling
 
 
 class SmartLoadModel(nn.Module):
-    def __init__(self, n_shared_features, n_player_features, n_win_features, n_injury_features, hidden_dim = 256, n_attention_heads = 4, dropout = 0.3, normalize_by_total = True):
+    def __init__(self, n_shared_features, n_player_features, n_win_features, n_injury_features, hidden_dim = 256, n_attention_heads = 4, dropout = 0.3, normalize_by_total = False):
         super().__init__()
 
         self.hidden_dim = hidden_dim
@@ -14,7 +14,7 @@ class SmartLoadModel(nn.Module):
 
         # Player encoder
         self.player_encoder = nn.Sequential(
-            nn.Linear(n_player_features + 1, hidden_dim), # + 1 for proposed minutes
+            nn.Linear(n_player_features + 2, hidden_dim), # + 1 for proposed minutes
             nn.LayerNorm(hidden_dim),
             nn.ReLU(),
             nn.Dropout(dropout),
@@ -88,12 +88,6 @@ class SmartLoadModel(nn.Module):
 
         if proposed_minutes is None:
             proposed_minutes = batch['actual_minutes']
-            # if we always will use actual minutes during training, the model can become too dependent on minutes, so we need some noise
-            if self.training:
-                proposed_minutes = self._augment_minutes(
-                    proposed_minutes,
-                    mask = batch['player_mask']
-                )
 
         proposed_minutes = proposed_minutes.to(batch['player_features'].device).float()
         mask = mask.to(proposed_minutes.device).float()
@@ -104,13 +98,14 @@ class SmartLoadModel(nn.Module):
             team_total = proposed_minutes.sum(dim = 1, keepdim = True).clamp(min = 1.0)
             normalized_minutes = proposed_minutes / team_total
         else:
-            normalized_minutes = (proposed_minutes / 48.0).clamp(0, 1)
+            normalized_minutes = proposed_minutes / 48.0
 
         shared_encoded = self.shared_encoder(batch['shared_features']) # (32, 256)
 
         player_feats_with_minutes = torch.cat([
             batch['player_features'], # (32, 19, 36)
-            normalized_minutes.unsqueeze(-1) # (32, 19, 1)
+            normalized_minutes.unsqueeze(-1), # (32, 19, 1)
+            (normalized_minutes ** 2).unsqueeze(-1)
         ], dim = -1) # (32, 19, 36 + 1)
 
 

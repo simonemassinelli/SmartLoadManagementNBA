@@ -1,0 +1,72 @@
+Max players: 19
+Dataset ready
+Total games: 37,697
+Features
+Shared: 25
+Player: 36
+Win: 20
+Injury:  23
+Total features: 104
+Total unique features: 70
+Total games: 37,697
+Unique dates: 2,995
+Avg games/day: 12.6
+Train: 30,279 games from 2,396 dates
+(2005-10-15 - 2016-11-23)
+Val: 3,980 games from 299 dates
+(2016-11-25 - 2018-02-26)
+Test: 3,438 games from 300 dates
+(2018-02-27 - 2019-06-13)
+Injury rate: 0.0202 (2.02%)
+Recommended pos_weight: 48.4
+Epoch 1/30:   0%|          | 0/947 [00:00<?, ?it/s]D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Epoch 1/30: 100%|██████████| 947/947 [03:01<00:00,  5.21it/s]
+
+Epoch 1 / 30
+Train - Total: 1.5569 | Win: 0.6190 | Injury: 0.9379
+D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Val - Total: 1.5252 | Win: 0.6210 | Injury: 0.9042
+LR: 0.001000
+Train-Val Gap: 0.0317
+
+Detailed Validation Metrics:
+D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Win - Acc: 0.6593 | AUC: 0.7159
+Injury - Acc: 0.7364 | AUC: 0.7391
+Injury - Precision: 0.0405 | Recall: 0.6233 | F1: 0.0761
+New best model saved. Val loss: 1.5252
+Best val loss: 1.5252 (epoch 1)
+Best validation loss: 1.5252
+Epoch 2/30:   0%|          | 0/947 [00:00<?, ?it/s]D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Epoch 2/30:  32%|███▏      | 302/947 [00:58<02:05,  5.14it/s]
+Traceback (most recent call last):
+  File "D:\fds_final\SmartLoadManagementNBA\scripts\model_training\model_training.py", line 121, in <module>
+    preds = model(batch)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1881, in _call_impl
+    return inner()
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1842, in inner
+    hook_result = hook(self, args, result)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\wandb\integration\torch\wandb_torch.py", line 113, in <lambda>
+    lambda mod, inp, outp: parameter_log_hook(
+                           ~~~~~~~~~~~~~~~~~~^
+        mod, inp, outp, log_track_params
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\wandb\integration\torch\wandb_torch.py", line 108, in parameter_log_hook
+    self.log_tensor_stats(data.cpu(), "parameters/" + prefix + name)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\wandb\integration\torch\wandb_torch.py", line 207, in log_tensor_stats
+    if self._no_finite_values(flat):
+       ~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\wandb\integration\torch\wandb_torch.py", line 297, in _no_finite_values
+    return tensor.shape == torch.Size([0]) or (~torch.isfinite(tensor)).all().item()
+                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+KeyboardInterrupt
