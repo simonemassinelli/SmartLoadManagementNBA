@@ -92,11 +92,10 @@ class GameDataset(Dataset):
 
         won = float(game_data['TEAM_WON'].iloc[0])
 
-        injuries = np.zeros(self.max_players, dtype = np.float32)
-        if 'INJURED_NEXT_GAME' in game_data.columns:
-            injuries[:num_players]  = game_data['INJURED_NEXT_GAME'].values
-        else:
-            injuries[:num_players] = game_data['IS_INJURED'].values
+        injuries = np.zeros(self.max_players, dtype=np.float32)
+        injuries[:num_players] = game_data['INJURED_NEXT_GAME'].values
+
+
 
         return{
             'shared_features': torch.FloatTensor(shared),
@@ -117,7 +116,7 @@ class GameDataset(Dataset):
         all_features.update(self.WIN_FEATURES)
         all_features.update(self.INJURY_FEATURES)
         all_features.update(['MIN_INT', 'TEAM_WON', 'SEASON', 'PLAYER_TEAM', 'GAME_DATE_EST'])
-        all_features.update(['GAME_ID'])
+        all_features.update(['GAME_ID', 'INJURED_NEXT_GAME'])
         missing = [feature for feature in all_features if feature not in self.df.columns]
 
         if missing:

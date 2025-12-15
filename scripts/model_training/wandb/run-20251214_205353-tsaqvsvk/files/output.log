@@ -1,0 +1,52 @@
+Max players: 19
+Dataset ready
+Total games: 37,697
+Features
+Shared: 25
+Player: 36
+Win: 20
+Injury:  26
+Total features: 107
+Total unique features: 73
+Total games: 37,697
+Unique dates: 2,995
+Avg games/day: 12.6
+Train: 30,279 games from 2,396 dates
+(2005-10-15 - 2016-11-23)
+Val: 3,980 games from 299 dates
+(2016-11-25 - 2018-02-26)
+Test: 3,438 games from 300 dates
+(2018-02-27 - 2019-06-13)
+Injury rate: 0.2173 (21.73%)
+Recommended pos_weight: 3.6
+Epoch 1/30:   0%|          | 0/947 [00:00<?, ?it/s]D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Epoch 1/30:  22%|██▏       | 205/947 [00:52<03:11,  3.87it/s]
+Traceback (most recent call last):
+  File "D:\fds_final\SmartLoadManagementNBA\scripts\model_training\model_training.py", line 106, in <module>
+    for batch in tqdm(train_loader, desc=f"Epoch {epoch+1}/{n_epochs}"):
+                 ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\tqdm\std.py", line 1181, in __iter__
+    for obj in iterable:
+               ^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py", line 732, in __next__
+    data = self._next_data()
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py", line 788, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\_utils\fetch.py", line 50, in fetch
+    data = self.dataset.__getitems__(possibly_batched_index)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataset.py", line 416, in __getitems__
+    return [self.dataset[self.indices[idx]] for idx in indices]
+            ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\src\data\GameDataset.py", line 91, in __getitem__
+    injury_feats[:num_players] = game_data[self.INJURY_FEATURES].values
+                                 ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\frame.py", line 4119, in __getitem__
+    indexer = self.columns._get_indexer_strict(key, "columns")[1]
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6204, in _get_indexer_strict
+    keyarr = com.asarray_tuplesafe(keyarr)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\common.py", line 243, in asarray_tuplesafe
+    with warnings.catch_warnings():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+KeyboardInterrupt

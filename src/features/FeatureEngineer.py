@@ -105,6 +105,8 @@ class FeatureEngineer:
             .cumcount() + 1
         )
 
+        team_games = team_games.drop_duplicates(subset=['SEASON', 'PLAYER_TEAM', 'GAME_DATE_EST'])
+
         self.df = self.df.merge(
             team_games,
             on = ['SEASON', 'PLAYER_TEAM', 'GAME_DATE_EST'],
@@ -198,6 +200,10 @@ class FeatureEngineer:
             .shift(1)
             .fillna(0)
         )
+        team_results = team_results.drop_duplicates(subset=['SEASON', 'PLAYER_TEAM', 'GAME_DATE_EST'])
+
+        key = ['SEASON', 'PLAYER_TEAM', 'GAME_DATE_EST']
+        dup = team_results.duplicated(key, keep=False).sum()
 
         self.df = self.df.merge(
             team_results[['SEASON', 'PLAYER_TEAM', 'GAME_DATE_EST', 'TEAM_WIN_RATE_10']],
@@ -348,6 +354,11 @@ class FeatureEngineer:
             .shift(1)
             .fillna(0)
         )
+        self.df['INJURED_NEXT_GAME'] = (
+            self.df.groupby('PLAYER_NAME')['IS_INJURED']
+            .shift(-1)
+            .fillna(0)
+        )
 
         self.df['INJURY_NEARBY_PAST'] = (
             self.df.groupby('PLAYER_NAME')['IS_INJURED']
@@ -393,6 +404,7 @@ class FeatureEngineer:
         self.df['ANY_FATIGUE'] = (self.df['PURE_FATIGUE_RISK'] > 0).astype(int)
 
         self.df['POOR_CONDITION'] = (self.df['CONDITION'] < 85).astype(int)
+
 
     def physical_features(self):
         height_m = self.df['PLAYER_HEIGHT'] / 100

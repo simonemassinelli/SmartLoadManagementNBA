@@ -1,0 +1,96 @@
+Max players: 19
+Dataset ready
+Total games: 37,697
+Features
+Shared: 25
+Player: 36
+Win: 20
+Injury:  23
+Total features: 104
+Total unique features: 70
+Total games: 37,697
+Unique dates: 2,995
+Avg games/day: 12.6
+Train: 30,279 games from 2,396 dates
+(2005-10-15 - 2016-11-23)
+Val: 3,980 games from 299 dates
+(2016-11-25 - 2018-02-26)
+Test: 3,438 games from 300 dates
+(2018-02-27 - 2019-06-13)
+Injury rate: 0.0199 (1.99%)
+Recommended pos_weight: 49.1
+Epoch 1/30:   0%|          | 0/947 [00:00<?, ?it/s]D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Epoch 1/30: 100%|██████████| 947/947 [03:23<00:00,  4.65it/s]
+
+Epoch 1 / 30
+Train - Total: 0.6356 | Win: 0.6203 | Injury: 0.0153
+D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Val - Total: 0.6394 | Win: 0.6259 | Injury: 0.0135
+LR: 0.001000
+  Train-Val Gap: -0.0038
+
+Detailed Validation Metrics:
+D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Win - Acc: 0.6495 | AUC: 0.7161
+Injury - Acc: 0.9826 | AUC: 0.7343
+Injury - Precision: 0.0000 | Recall: 0.0000 | F1: 0.0000
+New best model saved. Val loss: 0.6394
+Best val loss: 0.6394 (epoch 1)
+Best validation loss: 0.6394
+Epoch 2/30:   0%|          | 0/947 [00:00<?, ?it/s]D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Epoch 2/30: 100%|██████████| 947/947 [04:48<00:00,  3.28it/s]
+
+Epoch 2 / 30
+Train - Total: 0.6214 | Win: 0.6068 | Injury: 0.0146
+D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Val - Total: 0.6300 | Win: 0.6163 | Injury: 0.0137
+LR: 0.001000
+  Train-Val Gap: -0.0086
+
+Detailed Validation Metrics:
+D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Win - Acc: 0.6633 | AUC: 0.7238
+Injury - Acc: 0.9826 | AUC: 0.7234
+Injury - Precision: 0.0000 | Recall: 0.0000 | F1: 0.0000
+New best model saved. Val loss: 0.6300
+Best val loss: 0.6300 (epoch 2)
+Best validation loss: 0.6300
+Epoch 3/30:   0%|          | 0/947 [00:00<?, ?it/s]D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Epoch 3/30:  29%|██▉       | 274/947 [01:53<04:38,  2.41it/s]
+Traceback (most recent call last):
+  File "D:\fds_final\SmartLoadManagementNBA\scripts\model_training\model_training.py", line 116, in <module>
+    for k, v in batch.items():
+             ^^^^^^^^^^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\tqdm\std.py", line 1181, in __iter__
+    for obj in iterable:
+               ^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py", line 732, in __next__
+    data = self._next_data()
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py", line 788, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\_utils\fetch.py", line 50, in fetch
+    data = self.dataset.__getitems__(possibly_batched_index)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataset.py", line 416, in __getitems__
+    return [self.dataset[self.indices[idx]] for idx in indices]
+            ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\src\data\GameDataset.py", line 80, in __getitem__
+    player_feats[:num_players] = game_data[self.PLAYER_FEATURES].values
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\frame.py", line 12691, in values
+    return self._mgr.as_array()
+           ~~~~~~~~~~~~~~~~~~^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\internals\managers.py", line 1713, in as_array
+    arr = self._interleave(dtype=dtype, na_value=na_value)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\internals\managers.py", line 1775, in _interleave
+    if not itemmask.all():
+           ~~~~~~~~~~~~^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\numpy\_core\_methods.py", line 72, in _all
+    return umr_all(a, axis, dtype, out, keepdims)
+KeyboardInterrupt

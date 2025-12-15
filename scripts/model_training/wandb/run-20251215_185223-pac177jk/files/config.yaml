@@ -1,0 +1,84 @@
+_wandb:
+    value:
+        cli_version: 0.23.1
+        e:
+            td5xelxrftviusru7jb4uvbkvx7l69ji:
+                codePath: scripts\model_training\model_training.py
+                codePathLocal: model_training.py
+                cpu_count: 6
+                cpu_count_logical: 12
+                disk:
+                    /:
+                        total: "222920962048"
+                        used: "160569737216"
+                email: ckipf5668@gmail.com
+                executable: D:\fds_final\SmartLoadManagementNBA\.venv\Scripts\python.exe
+                git:
+                    commit: 19cc5611684729531f9fcd307b803a02427d4850
+                    remote: git@github.com:simonemassinelli/SmartLoadManagementNBA.git
+                host: Silence
+                memory:
+                    total: "7879585792"
+                os: Windows-11-10.0.26200-SP0
+                program: D:\fds_final\SmartLoadManagementNBA\scripts\model_training\model_training.py
+                python: CPython 3.13.1
+                root: D:\fds_final\SmartLoadManagementNBA\scripts\model_training
+                startedAt: "2025-12-15T16:52:23.490789Z"
+                writerId: td5xelxrftviusru7jb4uvbkvx7l69ji
+        m: []
+        python_version: 3.13.1
+        t:
+            "1":
+                - 1
+                - 5
+                - 53
+            "2":
+                - 1
+                - 5
+                - 53
+            "3":
+                - 1
+                - 13
+                - 15
+                - 16
+                - 62
+            "4": 3.13.1
+            "5": 0.23.1
+            "8":
+                - 3
+            "12": 0.23.1
+            "13": windows-amd64
+batch_size:
+    value: 32
+dropout:
+    value: 0.3
+early_stopping_patience:
+    value: 5
+epochs:
+    value: 30
+hidden_dim:
+    value: 256
+injury_weight:
+    value: 0.5
+learning_rate:
+    value: 0.001
+n_attention_heads:
+    value: 4
+n_injury_features:
+    value: 23
+n_player_features:
+    value: 36
+n_shared_features:
+    value: 25
+n_win_features:
+    value: 20
+optimizer:
+    value: AdamW
+scheduler:
+    value: ReduceLROnPlateau
+train_split:
+    value: 0.8
+val_split:
+    value: 0.1
+win_weight:
+    value: 1

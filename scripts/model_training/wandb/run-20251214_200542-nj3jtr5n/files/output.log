@@ -1,0 +1,110 @@
+Max players: 19
+Dataset ready
+Total games: 37,697
+Features
+Shared: 25
+Player: 36
+Win: 20
+Injury:  29
+Total features: 110
+Total unique features: 76
+Total games: 37,697
+Unique dates: 2,995
+Avg games/day: 12.6
+Train: 30,279 games from 2,396 dates
+(2005-10-15 - 2016-11-23)
+Val: 3,980 games from 299 dates
+(2016-11-25 - 2018-02-26)
+Test: 3,438 games from 300 dates
+(2018-02-27 - 2019-06-13)
+Epoch 1/30:   0%|          | 0/947 [00:00<?, ?it/s]D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Epoch 1/30: 100%|██████████| 947/947 [03:30<00:00,  4.50it/s]
+
+Epoch 1 / 30
+Train - Total: 1.4861 | Win: 0.6182 | Injury: 0.8679
+D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Val - Total: 1.4037 | Win: 0.6268 | Injury: 0.7769
+LR: 0.001000
+  Train-Val Gap: 0.0824
+New best model saved. Val loss: 1.4037
+Best val loss: 1.4037 (epoch 1)
+Best validation loss: 1.4037
+Epoch 2/30:   0%|          | 0/947 [00:00<?, ?it/s]D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Epoch 2/30: 100%|██████████| 947/947 [05:45<00:00,  2.74it/s]
+
+Epoch 2 / 30
+Train - Total: 1.3922 | Win: 0.6069 | Injury: 0.7853
+D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Val - Total: 1.3922 | Win: 0.6175 | Injury: 0.7747
+LR: 0.001000
+  Train-Val Gap: -0.0000
+
+Detailed Validation Metrics:
+D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Win - Acc: 0.6595 | AUC: 0.7216
+Injury - Acc: 0.9005 | AUC: 0.9483
+Injury - Precision: 0.7716 | Recall: 0.9055 | F1: 0.8332
+New best model saved. Val loss: 1.3922
+Best val loss: 1.3922 (epoch 2)
+Best validation loss: 1.3922
+Epoch 3/30:   0%|          | 0/947 [00:00<?, ?it/s]D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Epoch 3/30: 100%|██████████| 947/947 [07:30<00:00,  2.10it/s]
+
+Epoch 3 / 30
+Train - Total: 1.3718 | Win: 0.6001 | Injury: 0.7717
+D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Val - Total: 1.3941 | Win: 0.6262 | Injury: 0.7679
+LR: 0.001000
+  Train-Val Gap: -0.0223
+No improvement for 1 epochs
+Best val loss: 1.3922 (epoch 2)
+Best validation loss: 1.3922
+Epoch 4/30:   0%|          | 0/947 [00:00<?, ?it/s]D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Epoch 4/30:  60%|██████    | 570/947 [03:53<02:34,  2.44it/s]
+Traceback (most recent call last):
+  File "D:\fds_final\SmartLoadManagementNBA\scripts\model_training\model_training.py", line 102, in <module>
+    total_loss = 0.0
+                 ^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\tqdm\std.py", line 1181, in __iter__
+    for obj in iterable:
+               ^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py", line 732, in __next__
+    data = self._next_data()
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py", line 788, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\_utils\fetch.py", line 50, in fetch
+    data = self.dataset.__getitems__(possibly_batched_index)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataset.py", line 416, in __getitems__
+    return [self.dataset[self.indices[idx]] for idx in indices]
+            ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\src\data\GameDataset.py", line 78, in __getitem__
+    shared = game_data[self.SHARED_FEATURES].iloc[0].values.astype(np.float32)
+             ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\frame.py", line 4119, in __getitem__
+    indexer = self.columns._get_indexer_strict(key, "columns")[1]
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6207, in _get_indexer_strict
+    indexer = self.get_indexer_for(keyarr)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6194, in get_indexer_for
+    return self.get_indexer(target)
+           ~~~~~~~~~~~~~~~~^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 3887, in get_indexer
+    target = self._maybe_cast_listlike_indexer(target)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6729, in _maybe_cast_listlike_indexer
+    target_index = ensure_index(target)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 7715, in ensure_index
+    return Index(index_like, copy=copy)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 485, in __new__
+    name = maybe_extract_name(name, data, cls)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 7754, in maybe_extract_name
+    def maybe_extract_name(name, obj, cls) -> Hashable:
+
+KeyboardInterrupt
