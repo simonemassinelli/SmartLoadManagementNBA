@@ -2,3 +2,5 @@
 .idea/
 data/nba_game_features.csv
 data/*.csv
+checkpoints/
+scripts/model_training/wandb
