@@ -1,7 +1,7 @@
 from updates.FeatureEngineer import FeatureEngineer
 
-input_csv = "data/initial_FE_fixed.csv" # to change path
-output_csv = "data/nba_game_features_final.csv" # to change path
+input_csv = "data/initial_FE_fixed.csv" # change path
+output_csv = "data/nba_game_features_final.csv" # change path
 
 print(f"Feature Engineering initialization on {input_csv}")
 

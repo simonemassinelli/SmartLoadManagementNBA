@@ -1,6 +1,6 @@
 import pandas as pd
 
-df = pd.read_csv("../data/initial_FE_1.csv")
+df = pd.read_csv("../data/initial_FE.csv") # change path
 df['GAME_DATE_EST'] = pd.to_datetime(df['GAME_DATE_EST'])
 df = df.sort_values(['PLAYER_NAME', 'GAME_DATE_EST'])
 
@@ -38,5 +38,5 @@ print(f"IS_INJURED rate: {df['IS_INJURED'].mean():.2%}")
 print(f"NEW_INJURY rate: {df['NEW_INJURY'].mean():.2%}")
 print(f"INJURED_NEXT_GAME rate: {df['INJURED_NEXT_GAME'].mean():.2%}")
 
-df.to_csv('../data/initial_FE_fixed.csv', index=False)
+df.to_csv('../data/initial_FE_fixed.csv', index=False) # change path
 print("Saved!")

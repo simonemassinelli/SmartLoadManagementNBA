@@ -52,7 +52,7 @@ wandb.init(
 )
 
 
-path = r"../data/nba_game_features_final.csv"
+path = r"../data/nba_game_features_final.csv" # change path
 train_loader, val_loader, test_loader = get_dataloaders(
     csv_path=path,
     batch_size=config['batch_size'],
