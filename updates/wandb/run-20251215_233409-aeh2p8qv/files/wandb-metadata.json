@@ -1,0 +1,28 @@
+{
+  "os":  "Windows-11-10.0.26200-SP0",
+  "python":  "CPython 3.13.1",
+  "startedAt":  "2025-12-15T21:34:09.919026Z",
+  "program":  "D:\\fds_final\\SmartLoadManagementNBA\\updates\\model_training.py",
+  "codePath":  "updates\\model_training.py",
+  "codePathLocal":  "model_training.py",
+  "git":  {
+    "remote":  "git@github.com:simonemassinelli/SmartLoadManagementNBA.git",
+    "commit":  "e76a5fc0ef97385a734b67b36749b0ce88887917"
+  },
+  "email":  "ckipf5668@gmail.com",
+  "root":  "D:\\fds_final\\SmartLoadManagementNBA\\updates",
+  "host":  "Silence",
+  "executable":  "D:\\fds_final\\SmartLoadManagementNBA\\.venv\\Scripts\\python.exe",
+  "cpu_count":  6,
+  "cpu_count_logical":  12,
+  "disk":  {
+    "/":  {
+      "total":  "222920962048",
+      "used":  "160628572160"
+    }
+  },
+  "memory":  {
+    "total":  "7879585792"
+  },
+  "writerId":  "sslgn49wbozd0mxl0btxhylvahtdc0rb"
+}

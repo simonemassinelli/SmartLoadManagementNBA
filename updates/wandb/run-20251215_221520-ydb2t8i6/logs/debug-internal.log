@@ -1,0 +1,13 @@
+{"time":"2025-12-15T22:15:23.1572606+02:00","level":"INFO","msg":"stream: starting","core version":"0.23.1"}
+{"time":"2025-12-15T22:15:23.6551635+02:00","level":"INFO","msg":"stream: created new stream","id":"ydb2t8i6"}
+{"time":"2025-12-15T22:15:23.6576189+02:00","level":"INFO","msg":"handler: started","stream_id":"ydb2t8i6"}
+{"time":"2025-12-15T22:15:23.6608031+02:00","level":"INFO","msg":"stream: started","id":"ydb2t8i6"}
+{"time":"2025-12-15T22:15:23.6613855+02:00","level":"INFO","msg":"writer: started","stream_id":"ydb2t8i6"}
+{"time":"2025-12-15T22:15:23.6613855+02:00","level":"INFO","msg":"sender: started","stream_id":"ydb2t8i6"}
+{"time":"2025-12-15T22:15:54.5858623+02:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/ckipf5668-university-of-latvia/nba_model/ydb2t8i6/file_stream\": dial tcp: lookup api.wandb.ai: getaddrinfow: This is usually a temporary error during hostname resolution and means that the local server did not receive a response from an authoritative server."}
+{"time":"2025-12-15T22:15:56.6891414+02:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/ckipf5668-university-of-latvia/nba_model/ydb2t8i6/file_stream\": dial tcp: lookup api.wandb.ai: getaddrinfow: This is usually a temporary error during hostname resolution and means that the local server did not receive a response from an authoritative server."}
+{"time":"2025-12-15T22:23:19.11591+02:00","level":"INFO","msg":"stream: closing","id":"ydb2t8i6"}
+{"time":"2025-12-15T22:23:20.778737+02:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-12-15T22:23:21.2966987+02:00","level":"INFO","msg":"handler: closed","stream_id":"ydb2t8i6"}
+{"time":"2025-12-15T22:23:21.2979335+02:00","level":"INFO","msg":"sender: closed","stream_id":"ydb2t8i6"}
+{"time":"2025-12-15T22:23:21.2985361+02:00","level":"INFO","msg":"stream: closed","id":"ydb2t8i6"}

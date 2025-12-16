@@ -1,0 +1,65 @@
+Max players: 19
+Dataset ready
+Total games: 37,697
+Features
+Shared: 25
+Player: 36
+Win: 20
+Injury:  23
+Total features: 104
+Total unique features: 70
+Total games: 37,697
+Unique dates: 2,995
+Avg games/day: 12.6
+Train: 30,279 games from 2,396 dates
+(2005-10-15 - 2016-11-23)
+Val: 3,980 games from 299 dates
+(2016-11-25 - 2018-02-26)
+Test: 3,438 games from 300 dates
+(2018-02-27 - 2019-06-13)
+Injury rate: 0.2001 (20.01%)
+Recommended pos_weight: 4.0
+Epoch 1/30:   0%|          | 0/947 [00:00<?, ?it/s]D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Epoch 1/30: 100%|██████████| 947/947 [03:12<00:00,  4.92it/s]
+
+Epoch 1 / 30
+Train - Total: 2.1244 | Win: 0.6214 | Injury: 1.5030
+D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Val - Total: 2.0572 | Win: 0.6269 | Injury: 1.4303
+LR: 0.001000
+Train-Val Gap: 0.0672
+
+Detailed Validation Metrics:
+D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Win - Acc: 0.6573 | AUC: 0.7153
+Injury - Acc: 0.7224 | AUC: 0.9333
+Injury - Precision: 0.4550 | Recall: 0.9404 | F1: 0.6133
+New best model saved. Val loss: 2.0572
+Best val loss: 2.0572 (epoch 1)
+Best validation loss: 2.0572
+Epoch 2/30:   0%|          | 0/947 [00:00<?, ?it/s]D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Epoch 2/30:  49%|████▉     | 467/947 [02:57<03:02,  2.63it/s]
+Traceback (most recent call last):
+  File "D:\fds_final\SmartLoadManagementNBA\updates\model_training.py", line 114, in <module>
+    for batch in tqdm(train_loader, desc=f"Epoch {epoch+1}/{n_epochs}"):
+                 ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\tqdm\std.py", line 1181, in __iter__
+    for obj in iterable:
+               ^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py", line 732, in __next__
+    data = self._next_data()
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py", line 788, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\_utils\fetch.py", line 50, in fetch
+    data = self.dataset.__getitems__(possibly_batched_index)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataset.py", line 416, in __getitems__
+    return [self.dataset[self.indices[idx]] for idx in indices]
+            ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\updates\GameDataset.py", line 108, in __getitem__
+    'injuries': torch.FloatTensor(injuries),
+                ~~~~~~~~~~~~~~~~~^^^^^^^^^^
+KeyboardInterrupt

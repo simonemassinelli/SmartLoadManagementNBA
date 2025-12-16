@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 
-from src.model.SelfAttentionPooling import SelfAttentionPooling
+from SelfAttentionPooling_17 import SelfAttentionPooling
 
 
 class SmartLoadModel(nn.Module):

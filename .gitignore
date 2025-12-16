@@ -2,3 +2,5 @@ scripts/
 data/
 .venv/
 .idea/
+updates/test.py
+udpates/wandb/

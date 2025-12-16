@@ -93,7 +93,7 @@ class SmartLoadLoss(nn.Module):
         injury_rate = total_injuries / max(total_players, 1)
         pos_weight = (1 - injury_rate) / max(injury_rate, 1e-6)
 
-        print(f"Injury rate: {injury_rate:.4f} ({injury_rate*100:.2f}%)")
+        print(f"Next injury rate: {injury_rate:.4f} ({injury_rate*100:.2f}%)")
         print(f"Recommended pos_weight: {pos_weight:.1f}")
 
         return pos_weight

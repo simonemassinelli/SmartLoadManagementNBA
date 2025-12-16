@@ -5,11 +5,11 @@ import torch.optim as optim
 from tqdm import tqdm
 import wandb
 
-from src.model.SmartLoadModel import SmartLoadModel
-from src.data.features import SHARED_FEATURES, PLAYER_FEATURES, WIN_FEATURES, INJURY_FEATURES
-from dataloaders import get_dataloaders
-from src.model.SmartLoadLoss import SmartLoadLoss
-from model_evaluation import (
+from updates.SmartLoadModel import SmartLoadModel
+from updates.features import SHARED_FEATURES, PLAYER_FEATURES, WIN_FEATURES, INJURY_FEATURES
+from dataloaders_22 import get_dataloaders
+from updates.SmartLoadLoss import SmartLoadLoss
+from updates.model_evaluation import (
     evaluate_metrics,
     find_optimal_threshold,
     find_threshold_at_recall,
@@ -28,7 +28,7 @@ config = {
     'epochs': 30,
     'hidden_dim': 256,
     'n_attention_heads': 4,
-    'dropout': 0.3,
+    'dropout': 0.2, # 0.3
     'win_weight': 1.0,
     'injury_weight': 0.5,
     'train_split': 0.8,
@@ -52,7 +52,7 @@ wandb.init(
 )
 
 
-path = r"../../data/nba_game_features_final.csv"
+path = r"../data/nba_game_features_final.csv" # change path
 train_loader, val_loader, test_loader = get_dataloaders(
     csv_path=path,
     batch_size=config['batch_size'],

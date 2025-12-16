@@ -1,0 +1,192 @@
+Max players: 19
+Dataset ready
+Total games: 37,697
+Features
+Shared: 24
+Player: 36
+Win: 20
+Injury:  28
+Total features: 108
+Total unique features: 74
+Total games: 37,697
+Unique dates: 2,995
+Avg games/day: 12.6
+Train: 30,279 games from 2,396 dates
+(2005-10-15 - 2016-11-23)
+Val: 3,980 games from 299 dates
+(2016-11-25 - 2018-02-26)
+Test: 3,438 games from 300 dates
+(2018-02-27 - 2019-06-13)
+Next injury rate: 0.0281 (2.81%)
+Recommended pos_weight: 34.5
+Epoch 1/30:   0%|          | 0/947 [00:00<?, ?it/s]D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Epoch 1/30: 100%|██████████| 947/947 [05:17<00:00,  2.99it/s]
+
+Epoch 1 / 30
+Train - Total: 1.8457 | Win: 0.6208 | Injury: 1.2248
+D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Val - Total: 1.8694 | Win: 0.6235 | Injury: 1.2459
+LR: 0.001000
+Train-Val Gap: -0.0237
+
+Detailed Validation Metrics:
+D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Win - Acc: 0.6555 | AUC: 0.7141
+Injury - Acc: 0.7020 | AUC: 0.6409
+Injury - Precision: 0.0478 | Recall: 0.4617 | F1: 0.0866
+New best model saved. Val loss: 1.8694
+Best val loss: 1.8694 (epoch 1)
+Best validation loss: 1.8694
+Epoch 2/30:   0%|          | 0/947 [00:00<?, ?it/s]D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Epoch 2/30: 100%|██████████| 947/947 [03:17<00:00,  4.80it/s]
+
+Epoch 2 / 30
+Train - Total: 1.8114 | Win: 0.6103 | Injury: 1.2012
+D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Val - Total: 1.8458 | Win: 0.6177 | Injury: 1.2282
+LR: 0.001000
+Train-Val Gap: -0.0344
+
+Detailed Validation Metrics:
+D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Win - Acc: 0.6606 | AUC: 0.7193
+Injury - Acc: 0.8088 | AUC: 0.6608
+Injury - Precision: 0.0609 | Recall: 0.3638 | F1: 0.1044
+New best model saved. Val loss: 1.8458
+Best val loss: 1.8458 (epoch 2)
+Best validation loss: 1.8458
+Epoch 3/30:   0%|          | 0/947 [00:00<?, ?it/s]D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Epoch 3/30: 100%|██████████| 947/947 [03:12<00:00,  4.91it/s]
+
+Epoch 3 / 30
+Train - Total: 1.7914 | Win: 0.6033 | Injury: 1.1881
+D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Val - Total: 1.8512 | Win: 0.6183 | Injury: 1.2330
+LR: 0.001000
+Train-Val Gap: -0.0598
+
+Detailed Validation Metrics:
+D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Win - Acc: 0.6656 | AUC: 0.7245
+Injury - Acc: 0.7375 | AUC: 0.6516
+Injury - Precision: 0.0518 | Recall: 0.4377 | F1: 0.0926
+No improvement for 1 epochs
+Best val loss: 1.8458 (epoch 2)
+Best validation loss: 1.8458
+Epoch 4/30:   0%|          | 0/947 [00:00<?, ?it/s]D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Epoch 4/30: 100%|██████████| 947/947 [03:12<00:00,  4.92it/s]
+
+Epoch 4 / 30
+Train - Total: 1.7805 | Win: 0.6001 | Injury: 1.1804
+D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Val - Total: 1.8494 | Win: 0.6244 | Injury: 1.2251
+LR: 0.001000
+Train-Val Gap: -0.0689
+
+Detailed Validation Metrics:
+D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Win - Acc: 0.6598 | AUC: 0.7259
+Injury - Acc: 0.7625 | AUC: 0.6669
+Injury - Precision: 0.0566 | Recall: 0.4312 | F1: 0.1000
+No improvement for 2 epochs
+Best val loss: 1.8458 (epoch 2)
+Best validation loss: 1.8458
+Epoch 5/30:   0%|          | 0/947 [00:00<?, ?it/s]D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Epoch 5/30: 100%|██████████| 947/947 [03:12<00:00,  4.93it/s]
+
+Epoch 5 / 30
+Train - Total: 1.7714 | Win: 0.5981 | Injury: 1.1733
+D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Val - Total: 1.8343 | Win: 0.6162 | Injury: 1.2181
+LR: 0.001000
+Train-Val Gap: -0.0629
+
+Detailed Validation Metrics:
+D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Win - Acc: 0.6643 | AUC: 0.7265
+Injury - Acc: 0.6582 | AUC: 0.6672
+Injury - Precision: 0.0504 | Recall: 0.5693 | F1: 0.0925
+New best model saved. Val loss: 1.8343
+Best val loss: 1.8343 (epoch 5)
+Best validation loss: 1.8343
+Epoch 6/30:   0%|          | 0/947 [00:00<?, ?it/s]D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Epoch 6/30: 100%|██████████| 947/947 [03:07<00:00,  5.04it/s]
+
+Epoch 6 / 30
+Train - Total: 1.7671 | Win: 0.5967 | Injury: 1.1704
+D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Val - Total: 1.8421 | Win: 0.6307 | Injury: 1.2114
+LR: 0.001000
+Train-Val Gap: -0.0750
+
+Detailed Validation Metrics:
+D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Win - Acc: 0.6633 | AUC: 0.7265
+Injury - Acc: 0.6429 | AUC: 0.6702
+Injury - Precision: 0.0496 | Recall: 0.5867 | F1: 0.0914
+No improvement for 1 epochs
+Best val loss: 1.8343 (epoch 5)
+Best validation loss: 1.8343
+Epoch 7/30:   0%|          | 0/947 [00:00<?, ?it/s]D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Epoch 7/30:  33%|███▎      | 309/947 [01:40<03:26,  3.09it/s]
+Traceback (most recent call last):
+  File "D:\fds_final\SmartLoadManagementNBA\updates\model_training.py", line 114, in <module>
+    for batch in tqdm(train_loader, desc=f"Epoch {epoch+1}/{n_epochs}"):
+                 ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\tqdm\std.py", line 1181, in __iter__
+    for obj in iterable:
+               ^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py", line 732, in __next__
+    data = self._next_data()
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py", line 788, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\_utils\fetch.py", line 50, in fetch
+    data = self.dataset.__getitems__(possibly_batched_index)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataset.py", line 416, in __getitems__
+    return [self.dataset[self.indices[idx]] for idx in indices]
+            ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\updates\GameDataset.py", line 88, in __getitem__
+    win_feats = game_data[self.WIN_FEATURES].iloc[0].values.astype(np.float32)
+                ~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\frame.py", line 4119, in __getitem__
+    indexer = self.columns._get_indexer_strict(key, "columns")[1]
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6207, in _get_indexer_strict
+    indexer = self.get_indexer_for(keyarr)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6194, in get_indexer_for
+    return self.get_indexer(target)
+           ~~~~~~~~~~~~~~~~^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 3887, in get_indexer
+    target = self._maybe_cast_listlike_indexer(target)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6729, in _maybe_cast_listlike_indexer
+    target_index = ensure_index(target)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 7715, in ensure_index
+    return Index(index_like, copy=copy)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 578, in __new__
+    result = klass._simple_new(arr, name, refs=refs)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 666, in _simple_new
+    result._reset_identity()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 832, in _reset_identity
+    @final
+
+KeyboardInterrupt

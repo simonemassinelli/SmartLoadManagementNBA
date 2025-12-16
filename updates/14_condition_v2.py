@@ -1,14 +1,14 @@
 import pandas as pd
 
-df = pd.read_csv("../../data/initial_FE.csv")
+df = pd.read_csv("../data/initial_FE.csv") # change path
+df['GAME_DATE_EST'] = pd.to_datetime(df['GAME_DATE_EST'])
+df = df.sort_values(['PLAYER_NAME', 'GAME_DATE_EST'])
 
 non_injury_patterns = [
-    "coach's decision",
-    "personal", "suspension", "suspended", "trade",
+    "coach's decision", "personal", "suspension", "suspended", "trade",
     "rest", "d-league", "nbdl", "developmental", "family", "bereavement",
     "birth of child", "visa", "travel", "organizational", "conditioning",
     "maintenance", "ineligible", "training", "not with team",
-    "simulated"
 ]
 
 injury_indicators = [
@@ -29,10 +29,14 @@ def is_injury(comment):
 
 df['IS_INJURED'] = df['COMMENT'].apply(is_injury)
 
-print(f"Rows: {len(df)}")
-print(f"IS_INJURED rate: {df['IS_INJURED'].mean():.2%}")
-print("\nTop injury comments:")
-print(df.loc[df['IS_INJURED']==1, 'COMMENT'].value_counts().head(30))
+df['PREV_INJURED'] = df.groupby('PLAYER_NAME')['IS_INJURED'].shift(1).fillna(0)
+df['NEW_INJURY'] = ((df['IS_INJURED'] == 1) & (df['PREV_INJURED'] == 0)).astype(int)
 
-df.to_csv('../../data/initial_FE_fixed.csv', index=False)
+df['INJURED_NEXT_GAME'] = df.groupby('PLAYER_NAME')['NEW_INJURY'].shift(-1).fillna(0)
+
+print(f"IS_INJURED rate: {df['IS_INJURED'].mean():.2%}")
+print(f"NEW_INJURY rate: {df['NEW_INJURY'].mean():.2%}")
+print(f"INJURED_NEXT_GAME rate: {df['INJURED_NEXT_GAME'].mean():.2%}")
+
+df.to_csv('../data/initial_FE_fixed.csv', index=False) # change path
 print("Saved!")

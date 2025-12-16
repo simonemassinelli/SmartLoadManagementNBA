@@ -1,0 +1,81 @@
+Max players: 19
+Dataset ready
+Total games: 37,697
+Features
+Shared: 25
+Player: 36
+Win: 20
+Injury:  23
+Total features: 104
+Total unique features: 70
+Total games: 37,697
+Unique dates: 2,995
+Avg games/day: 12.6
+Train: 30,279 games from 2,396 dates
+(2005-10-15 - 2016-11-23)
+Val: 3,980 games from 299 dates
+(2016-11-25 - 2018-02-26)
+Test: 3,438 games from 300 dates
+(2018-02-27 - 2019-06-13)
+Injury rate: 0.1964 (19.64%)
+Recommended pos_weight: 4.1
+Epoch 1/30:   0%|          | 0/947 [00:00<?, ?it/s]D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Epoch 1/30:  13%|█▎        | 126/947 [00:47<05:07,  2.67it/s]
+Traceback (most recent call last):
+  File "D:\fds_final\SmartLoadManagementNBA\updates\model_training.py", line 114, in <module>
+    for batch in tqdm(train_loader, desc=f"Epoch {epoch+1}/{n_epochs}"):
+                 ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\tqdm\std.py", line 1181, in __iter__
+    for obj in iterable:
+               ^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py", line 732, in __next__
+    data = self._next_data()
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py", line 788, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\_utils\fetch.py", line 50, in fetch
+    data = self.dataset.__getitems__(possibly_batched_index)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataset.py", line 416, in __getitems__
+    return [self.dataset[self.indices[idx]] for idx in indices]
+            ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\updates\GameDataset.py", line 78, in __getitem__
+    shared = game_data[self.SHARED_FEATURES].iloc[0].values.astype(np.float32)
+             ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\frame.py", line 4128, in __getitem__
+    data = self._take_with_is_copy(indexer, axis=1)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\generic.py", line 4175, in _take_with_is_copy
+    result = self.take(indices=indices, axis=axis)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\generic.py", line 4155, in take
+    new_data = self._mgr.take(
+        indices,
+        axis=self._get_block_manager_axis(axis),
+        verify=True,
+    )
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\internals\managers.py", line 913, in take
+    return self.reindex_indexer(
+           ~~~~~~~~~~~~~~~~~~~~^
+        new_axis=new_labels,
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        copy=None,
+        ^^^^^^^^^^
+    )
+    ^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\internals\managers.py", line 699, in reindex_indexer
+    new_blocks = self._slice_take_blocks_ax0(
+        indexer,
+    ...<2 lines>...
+        use_na_proxy=use_na_proxy,
+    )
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\internals\managers.py", line 862, in _slice_take_blocks_ax0
+    nb = blk.take_nd(taker, axis=0, new_mgr_locs=mgr_locs)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\internals\blocks.py", line 1373, in take_nd
+    new_values = algos.take_nd(
+        values, indexer, axis=axis, allow_fill=allow_fill, fill_value=fill_value
+    )
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\array_algos\take.py", line 117, in take_nd
+    return _take_nd_ndarray(arr, indexer, axis, fill_value, allow_fill)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\pandas\core\array_algos\take.py", line 162, in _take_nd_ndarray
+    func(arr, indexer, out, fill_value)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt

@@ -1,0 +1,53 @@
+Max players: 19
+Dataset ready
+Total games: 37,697
+Features
+Shared: 25
+Player: 36
+Win: 20
+Injury:  29
+Total features: 110
+Total unique features: 76
+Total games: 37,697
+Unique dates: 2,995
+Avg games/day: 12.6
+Train: 30,279 games from 2,396 dates
+(2005-10-15 - 2016-11-23)
+Val: 3,980 games from 299 dates
+(2016-11-25 - 2018-02-26)
+Test: 3,438 games from 300 dates
+(2018-02-27 - 2019-06-13)
+Injury rate: 0.2004 (20.04%)
+Recommended pos_weight: 4.0
+Epoch 1/30:   0%|          | 0/947 [00:00<?, ?it/s]D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\utils\data\dataloader.py:668: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+Epoch 1/30:   0%|          | 0/947 [00:00<?, ?it/s]
+Traceback (most recent call last):
+  File "D:\fds_final\SmartLoadManagementNBA\updates\model_training.py", line 121, in <module>
+    preds = model(batch)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1881, in _call_impl
+    return inner()
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1829, in inner
+    result = forward_call(*args, **kwargs)
+  File "D:\fds_final\SmartLoadManagementNBA\updates\SmartLoadModel.py", line 136, in forward
+    injury_logits = self.injury_head(injury_input).squeeze(-1)
+                    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\nn\modules\container.py", line 250, in forward
+    input = module(input)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "D:\fds_final\SmartLoadManagementNBA\.venv\Lib\site-packages\torch\nn\modules\linear.py", line 134, in forward
+    return F.linear(input, self.weight, self.bias)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: mat1 and mat2 shapes cannot be multiplied (608x542 and 536x256)
