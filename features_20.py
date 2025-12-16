@@ -2,7 +2,7 @@ SHARED_FEATURES = [
         'HOME_GAME',
         'BACK_TO_BACK',
         'WELL_RESTED',
-        'ROAD_GAMES_STREAK',
+        # 'ROAD_GAMES_STREAK',
         'GAMES_REMAINING',
         'SEASON_PROGRESS',
         'SEASON_END_PHASE',
@@ -117,5 +117,5 @@ INJURY_FEATURES = [
     'B2B_HEAVY_RISK_LAG1',
     'PURE_FATIGUE_RISK_LAG1',
     'ANY_FATIGUE_LAG1',
-    'IS_INJURED' # ?
+    # 'IS_INJURED' # ?
 ]

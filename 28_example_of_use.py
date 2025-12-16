@@ -3,7 +3,7 @@ import numpy as np
 import torch
 from SmartLoadModel_19 import SmartLoadModel
 from features_20 import SHARED_FEATURES, PLAYER_FEATURES, WIN_FEATURES, INJURY_FEATURES
-from objf_24 import optimize_minutes_evolutionary, AVG_INJURY_GAMES
+from objf_27 import optimize_minutes_evolutionary, AVG_INJURY_GAMES
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -51,9 +51,9 @@ model = SmartLoadModel(
     dropout=0.3
 ).to(device)
 
-checkpoint_path = r"C:\Users\casam\OneDrive\Desktop\Simone\PycharmProjects\SmartLoadManagementNBA\smartload_model.pt"
+checkpoint_path = r"C:\Users\casam\OneDrive\Desktop\Simone\PycharmProjects\SmartLoadManagementNBA\best_model.pth"
 checkpoint = torch.load(checkpoint_path, map_location=device)
-model.load_state_dict(checkpoint['model_state'])
+model.load_state_dict(checkpoint['model_state_dict'])
 model.eval()
 
 # Run Optimization

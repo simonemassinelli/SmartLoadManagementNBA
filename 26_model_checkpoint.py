@@ -18,11 +18,11 @@ model = SmartLoadModel(
 
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
-checkpoint_path = r"C:\Users\casam\OneDrive\Desktop\Simone\PycharmProjects\SmartLoadManagementNBA\smartload_model.pt"
+checkpoint_path = r"C:\Users\casam\OneDrive\Desktop\Simone\PycharmProjects\SmartLoadManagementNBA\best_model.pth"
 
 checkpoint = torch.load(checkpoint_path, map_location=device)
-model.load_state_dict(checkpoint["model_state"])
-optimizer.load_state_dict(checkpoint["optimizer_state"])
+model.load_state_dict(checkpoint["model_state_dict"])
+optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
 start_epoch = checkpoint["epoch"] + 1
 
-print(f"Checkpoint caricato, riprendo dal epoch {start_epoch}")
+print(f"Checkpoint loaded, restart from epoch {start_epoch}")
